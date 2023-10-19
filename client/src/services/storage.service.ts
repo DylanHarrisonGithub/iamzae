@@ -17,6 +17,7 @@ const StorageService = ((): typeof service extends Service ? typeof service : ne
         }
         storageObj[key] = value;
         sessionStorage.setItem(config.APP_NAME, JSON.stringify(storageObj));
+        window.dispatchEvent(new Event('storage'));
         return new Promise(resolve => resolve({
           success: true, 
           messages: [`CLIENT->SERVICES->STORAGE->SESSION->STORE: Value successfully stored to key ${key}.`]
@@ -62,6 +63,7 @@ const StorageService = ((): typeof service extends Service ? typeof service : ne
         }
         storageObj[key] = value;
         localStorage.setItem(config.APP_NAME, JSON.stringify(storageObj));
+        window.dispatchEvent(new Event('storage'));
         return new Promise(resolve => resolve({
           success: true, 
           messages: [`CLIENT->SERVICES->STORAGE->LOCAL->STORE: Value successfully stored to key ${key}.`]
@@ -105,6 +107,8 @@ const StorageService = ((): typeof service extends Service ? typeof service : ne
         storage[key] = value;
   
         document.cookie = config.APP_NAME+'='+atob(JSON.stringify(storage));
+        window.dispatchEvent(new Event('storage'));
+
         return new Promise(resolve => resolve({
           success: true, 
           messages: [`CLIENT->SERVICES->STORAGE->COOKIE->STORE: Value successfully stored to key ${key}.`]
@@ -130,6 +134,7 @@ const StorageService = ((): typeof service extends Service ? typeof service : ne
     WINDOW: {
       store: (key: string, value: any): ServicePromise => { 
         (<any>window)[config.APP_NAME][key] = value;
+        window.dispatchEvent(new Event('storage'));
         return new Promise(resolve => resolve({
           success: true, 
           messages: [`CLIENT->SERVICES->STORAGE->WINDOW->STORE: Value successfully stored to key ${key}.`]

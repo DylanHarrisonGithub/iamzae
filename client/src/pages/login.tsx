@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 
 import HttpService from "../services/http.service";
 import AuthService from "../services/auth.service";
+import StorageService from "../services/storage.service";
 
 import { ModalContext } from "../components/modal/modal";
+
+import config from "../config/config";
 
 const Login: React.FC<any> = (props: any) => {
 
@@ -17,7 +20,7 @@ const Login: React.FC<any> = (props: any) => {
   const navigate = useNavigate();
 
   const submit = () => {
-    HttpService.post<{ token: string }>('login', { username: form.username, password: form.password }).then(async res => {     
+    HttpService.post<{ token: string, user: any }>('login', { username: form.username, password: form.password }).then(async res => {     
 
       console.log(res);
       if (!res.success) {
@@ -27,6 +30,7 @@ const Login: React.FC<any> = (props: any) => {
         if (res.body?.token) {
           res.messages.forEach(m => modalContext.toast?.('success', m));
           await AuthService.storeToken(res.body.token);
+          await StorageService[config.APP_STORAGE_METHOD].store('user', res.body.user );
           navigate('/home');
         } else {
           modalContext.toast?.('error', 'Error occured attempting to login.');

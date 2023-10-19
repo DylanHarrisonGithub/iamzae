@@ -36,7 +36,7 @@ export type Contact = {
   email: string,
   subject: string,
   message: string,
-  search?: string
+  search: string
 }
 
 export type EventPerformance = {

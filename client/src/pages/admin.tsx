@@ -7,7 +7,7 @@ import HttpService from '../services/http.service';
 
 import { ModalContext } from '../components/modal/modal';
 
-import { User, EventPerformance, Review } from '../models/models';
+import { User, EventPerformance, Review, Contact } from '../models/models';
 import ToggleableContainer from '../components/toggleable-container/toggleable-container';
 
 import Media from '../components/admin/media/media';
@@ -15,6 +15,8 @@ import Users from '../components/admin/users/users';
 import EventsComponent from '../components/admin/event/event';
 import ReviewComponent from '../components/review/review';
 import ReviewForm from '../components/review/review-form';
+import ContactCard from '../components/admin/contact/contact-card';
+import Gallery2 from '../components/gallery/gallery2';
 
 const acceptedMedia = [
   'gif', 'jpg', 'jpeg', 'png',
@@ -22,13 +24,14 @@ const acceptedMedia = [
 ];
 
 
-const reviews = [
-  { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show, great product we had a good time z is the best dj i have ever seen', rating: 4, date: new Date("2023-10-01") },
-  { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show', rating: 3, date: new Date("2023-10-01") },
-  { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show', rating: 1, date: new Date("2023-10-01") },
-  { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show', rating: 5, date: new Date("2023-10-01") },
-  { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show', rating: 0, date: new Date("2023-10-01") }
-]
+// const reviews = [
+//   { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show, great product we had a good time z is the best dj i have ever seen', rating: 4, date: new Date("2023-10-01") },
+//   { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show', rating: 3, date: new Date("2023-10-01") },
+//   { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show', rating: 1, date: new Date("2023-10-01") },
+//   { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show', rating: 5, date: new Date("2023-10-01") },
+//   { reviewerName: 'Bob Sampson', reviewText: 'Really enjoyed the show', rating: 0, date: new Date("2023-10-01") }
+// ]
+
 const Admin: React.FC<any> = (props: any) => {
 
   const modalContext = React.useContext(ModalContext);
@@ -36,13 +39,14 @@ const Admin: React.FC<any> = (props: any) => {
   const [media, setMedia] = React.useState<string[]>([]);
   const [users, setUsers] = React.useState<User[]>([]);
   const [events, setEvents] = React.useState<EventPerformance[]>([]);
-  // const [reviews, setReviews] = React.useState<Review[]>([]);
+  const [reviews, setReviews] = React.useState<Review[]>([]);
+  const [contacts, setContacts] = React.useState<Contact[]>([]);
 
   const quickGet = async <T = void,>(route: string, params?: any): Promise<T | void> => HttpService.get<T>(route, params).then(res => {
     if (res.success && res.body) {
       modalContext.toast!('success', `GET request to ${route} successful.`);
       //res.messages?.forEach(m => modalContext.toast!('success', m));
-      console.log(route, res.messages);
+      //console.log(route, res.messages);
       return res.body;
     } else {
       modalContext.toast!('warning', `GET request to ${route} failed.`);
@@ -51,7 +55,11 @@ const Admin: React.FC<any> = (props: any) => {
     }
   });
 
-  // React.useEffect(() => {}, []);
+  React.useEffect(() => {
+    (async () => {
+      setContacts(await quickGet<Contact[]>('contactstream', { afterID: 0, numrows: 10 }) || []);
+    })();
+  }, []);
 
   return (
     <div className='py-16 hex2'>
@@ -80,7 +88,7 @@ const Admin: React.FC<any> = (props: any) => {
           <ToggleableContainer title="All Reviews" color1='red-500'>
             <Gallery>
               {
-                reviews.map((r, i) => (<ReviewComponent key={i} reviewerName={r.reviewerName} reviewText={r.reviewText} rating={r.rating} date={r.date}/>))
+                reviews.map((r, i) => (<ReviewComponent key={i} reviewerName={r.name} reviewText={r.text} rating={r.stars} date={new Date(r.timestamp)}/>))
               }
             </Gallery>
           </ToggleableContainer>
@@ -88,11 +96,16 @@ const Admin: React.FC<any> = (props: any) => {
           {/* ------------------------------------------------------- Contact ------------------------------------------------------- */}
 
           <ToggleableContainer title="Contact" color1='green-500'>
-            <Gallery>
+            <Gallery2>
               {
-                reviews.map((r, i) => (<ReviewComponent key={i} reviewerName={r.reviewerName} reviewText={r.reviewText} rating={r.rating} date={r.date}/>))
+                contacts.map((c, i) => (<ContactCard key={i} contact={{
+                  date: new Date().toISOString(),
+                  email: c.email,
+                  subject: c.subject,
+                  message: c.message
+                }}/>))
               }
-            </Gallery>
+            </Gallery2>
           </ToggleableContainer>
 
         <hr />

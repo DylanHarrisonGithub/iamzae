@@ -10,6 +10,8 @@ import { COMMON_REGEXES } from "../services/validation.service";
 import { EventPerformance } from "../models/models";
 import MiniEventDetail from "../components/mini-event-detail/mini-event-detail";
 
+import { StorageContext } from "../components/storage/storage-context";
+
 const lorem = new LoremIpsum({
   sentencesPerParagraph: {
     max: 8,
@@ -29,18 +31,19 @@ const Home: React.FC<any> = (props: any) => {
     { id: -1, timestamp: -1, period: 'Once',  day: 5, month: 'August', year: 2023, time: '7:00', location: 'safe house', thumbnail: `https://s3.amazonaws.com/gry-cms/safehouse-milwaukee//mural%20edit.jpg`, description: `Playing at [Establishment Name] was an absolute thrill from start to finish. The energy of the crowd was electrifying, and the synergy between the music and the atmosphere was truly magical. Seeing the dancefloor come alive and feeling the audience's energy fuel my set was an experience that will stay with me forever.`, website: '/', media: []},
   ];
 
+  const storageContext = React.useContext(StorageContext);
   return (
     <div>
 
       <Hero video="dba28b2adc4d4a289d46b56c99cd327f.mov">
-        <div className={`w-1/3 glass-light rounded-lg text-center`}>
+        <div className={`w-full md:w-1/2 lg:w-1/3 m-8 p-4 glass-light rounded-lg text-center`}>
           <h1 className="mb-5 text-5xl font-bold gold-text">IAMZAE</h1>
           <p className="mb-5 gold-text">
           Get ready for ZAE – the driving force behind unforgettable house music moments. With an unparalleled ability to fuse tradition and innovation, ZAE commands dancefloors, creating a rhythmic unity that transcends. From underground vibes to festival stages, experience the pulse of ZAE's curated sonic journey that redefines house music, one set at a time.          </p>
           {/* <button className="btn btn-primary">Get Started</button> */}
         </div>
       </Hero>
-
+      {/* { JSON.stringify(storageContext) } */}
       <Hero svg="hex2" translateY={-4}>
         <div className="w-11/12 md:w-2/3 glass rounded-lg">
           <Carousel categoryName="Events">
@@ -59,8 +62,8 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </Hero>
 
-      <Hero translateX={12}>
-        <div className={`w-1/2 text-center bg-white bg-opacity-80 `}>
+      <Hero translateX={(document.body.clientWidth > 1200) ? 12 : undefined}>
+        <div className={`w-full md:w-1/2 m-8 p-4 text-center bg-white bg-opacity-80 rounded-lg`}>
           <p className="mb-5 rainbow-text">
           The DJ harnesses an arsenal of cutting-edge technologies and devices to craft mesmerizing live music experiences. Armed with a digital setup, they deploy software like Ableton Live or Traktor to seamlessly mix and manipulate tracks. MIDI controllers and launchpads become extensions of their creativity, enabling live remixing and on-the-fly effects manipulation.
 
@@ -72,7 +75,7 @@ Sample pads and drum machines add dynamic layers, while synthesizers contribute 
       <Hero svg="fan"/>
       <Hero svg="diamonds">
         <div 
-          className={`w-1/3 glass rounded-lg text-center ${
+          className={`w-full md:w-1/2 lg:w-1/3 m-8 p-4 glass-light rounded-lg text-center ${
             props.translateX && (
               (props.translateX > 0) ?
                 `translate-x-${props.translateX}`

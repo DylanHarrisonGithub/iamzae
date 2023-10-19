@@ -87,13 +87,13 @@ const Events: React.FC<any> = (props: any) => {
       <div className="pt-16 container">
         <div className="py-8 sm:w-[600px] md:w-[800px] lg:w-[1200px]">
           <div className="lg:flex mx-5">
-            <div className="glass rounded-lg my-4">
-              <button className="btn btn-ghost text-xl gold-text text-center">
+            <div className="block lg:inline-block glass rounded-lg my-4">
+              <button className="btn btn-ghost text-xl gold-text text-center align-middle">
                 &nbsp;&nbsp;Events Calendar&nbsp;&nbsp;
               </button>
             </div>
             <input 
-              className={`bg-gray-100 glass text-right appearance-none border-2 border-gray-200 rounded w-2/3 py-2 my-4 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ml-auto`} 
+              className={`bg-gray-300 text-right appearance-none border-2 border-gray-600 rounded block w-full lg:w-2/3 py-4 my-4 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ml-auto`} 
               type="text"
               placeholder="Search Events"
               value={search} 
@@ -109,7 +109,24 @@ const Events: React.FC<any> = (props: any) => {
           { (events && events.length && events.length > 1) &&
             <div className="mx-5">
               <h1 className="text-white mx-8">{ search ? `Results for ${search}` : `All Events`}</h1>
-              <Carousel disableBrowseAll>
+              <Carousel disableBrowseAll onScrollRightEnd={()=> {
+                setBusy(true);
+                if (searchParams.get('search')) {
+                  HttpService.get<EventPerformance[]>('eventstream', { afterID: events[events.length-1].id || 0, numrows: 10, search: searchParams.get('search') }).then(res => {
+                    if (res.success && res.body) {
+                      setEvents(ev => [...ev, ...res.body!]);
+                    }
+                    setBusy(false);
+                  });
+                } else {
+                  HttpService.get<EventPerformance[]>('eventstream', { afterID: events[events.length-1].id || 0, numrows: 10 }).then(res => {
+                    if (res.success && res.body) {
+                      setEvents(ev => [...ev, ...res.body!]);
+                    }
+                    setBusy(false);
+                  });
+                }
+              }}>
                 {
                   events.map((e, i) => (
                     <div key={i} className="cursor-pointer w-96 glass" onClick={() => navigate(`/events/${e.id}`) }>
@@ -123,110 +140,116 @@ const Events: React.FC<any> = (props: any) => {
 
           {
             (events && events.length === 1) &&
-            <div className="mx-auto my-6 bg-slate-100">
-            {
-              events.map((ev, i) => (
-                <div className="border-gray-200 rounded p-1 shadow-2xl">
-                  <MiniEventDetail key={i} event={ev} />
-                  {
-                    (ev.media && ev.media.length) &&
+              <div className="mx-auto my-6 glass">
+                {
+                  events.map((ev, i) => (
+                    <div className="border-gray-200 rounded p-1 shadow-2xl">
+                      <div className="hidden md:block"><MiniEventDetail key={i} event={ev} /></div>
+                      <div className="md:hidden"><VerticalEventDetail key={i} event={ev} /></div>
                       <div className="p-4 border border-gray-300 rounded shadow-md">
-                        <h1>Media for this event</h1>
-                        <Gallery>
-                          {
-                            ev.media.map(a => (
-                              <span key={a} className="relative">
-                                {
-                                  acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
-                                    <img 
-                                      className="inline-block cursor-pointer" 
-                                      width={64} 
-                                      height={64} 
-                                      src={
-                                        (
-                                          a.toUpperCase().startsWith('HTTP://') ||
-                                          a.toUpperCase().startsWith('HTTPS://') ||
-                                          a.toUpperCase().startsWith('www.')
-                                        ) ?
-                                          a
-                                        :
-                                          config.ASSETS[config.ENVIRONMENT] + `media/${a}`
-                                      }
-                                      onClick={() => {
-                                        (new Promise<any>((res, rej) => {
-                                          modalContext.modal!({
-                                            node: (<MediaViewer filename={a}/>), 
-                                            resolve: res, 
-                                            reject: rej
-                                          });
-                                        })).then(result => {
-                                          modalContext.modal!();
-                                        }).catch(err => {});
-                                      }}
-                                    >
-                                    </img>
-                                  :
-                                    <video
-                                      className='cursor-pointer'
-                                      width={64} height={64}
-                                      src={
-                                        (
-                                          a.toUpperCase().startsWith('HTTP://') ||
-                                          a.toUpperCase().startsWith('HTTPS://') ||
-                                          a.toUpperCase().startsWith('www.')
-                                        ) ?
-                                          a
-                                        :
-                                          config.ASSETS[config.ENVIRONMENT] + `media/${a}`
-                                      }
-                                      autoPlay={false} muted={true} loop={true}
-                                      onClick={() => {
-                                        (new Promise<any>((res, rej) => {
-                                          modalContext.modal!({
-                                            node: (<MediaViewer filename={a}/>), 
-                                            resolve: res, 
-                                            reject: rej
-                                          });
-                                        })).then(result => {
-                                          modalContext.modal!();
-                                        }).catch(err => {});
-                                      }}
-                                    ></video>
-                                }
-                              </span>
-                            ))
-                          }
-                        </Gallery>
+                        <h1 className="p-4">Media for this event</h1>
+                        { !!ev.media.length && 
+                          <Gallery>
+                            {
+                              ev.media.map(a => (
+                                <span key={a} className="relative">
+                                  {
+                                    acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
+                                      <img 
+                                        className="inline-block cursor-pointer" 
+                                        width={64} 
+                                        height={64} 
+                                        src={
+                                          (
+                                            a.toUpperCase().startsWith('HTTP://') ||
+                                            a.toUpperCase().startsWith('HTTPS://') ||
+                                            a.toUpperCase().startsWith('www.')
+                                          ) ?
+                                            a
+                                          :
+                                            config.ASSETS[config.ENVIRONMENT] + `media/${a}`
+                                        }
+                                        onClick={() => {
+                                          (new Promise<any>((res, rej) => {
+                                            modalContext.modal!({
+                                              node: (<MediaViewer filename={a}/>), 
+                                              resolve: res, 
+                                              reject: rej
+                                            });
+                                          })).then(result => {
+                                            modalContext.modal!();
+                                          }).catch(err => {});
+                                        }}
+                                      >
+                                      </img>
+                                    :
+                                      <video
+                                        className='cursor-pointer'
+                                        width={64} height={64}
+                                        src={
+                                          (
+                                            a.toUpperCase().startsWith('HTTP://') ||
+                                            a.toUpperCase().startsWith('HTTPS://') ||
+                                            a.toUpperCase().startsWith('www.')
+                                          ) ?
+                                            a
+                                          :
+                                            config.ASSETS[config.ENVIRONMENT] + `media/${a}`
+                                        }
+                                        autoPlay={false} muted={true} loop={true}
+                                        onClick={() => {
+                                          (new Promise<any>((res, rej) => {
+                                            modalContext.modal!({
+                                              node: (<MediaViewer filename={a}/>), 
+                                              resolve: res, 
+                                              reject: rej
+                                            });
+                                          })).then(result => {
+                                            modalContext.modal!();
+                                          }).catch(err => {});
+                                        }}
+                                      ></video>
+                                  }
+                                </span>
+                              ))
+                            }
+                          </Gallery>
+                        }
+                        {
+                          !(ev.media?.length) && 
+                            <div className="py-10 text-center">No media for this event</div>
+                        }
+                        
                       </div>
-                  }
-                  
-                  {
-                    (eventReviews && eventReviews.length) && 
+                      
+                      {
+                        (!!(eventReviews?.length)) && 
+                          <div className="p-4 border border-gray-300 rounded shadow-md">
+                            <h1 className="p-4">Reviews for this event</h1>
+                            <Gallery>
+                              {
+                                eventReviews.map(er => (<ReviewComponent reviewerName={er.name} reviewText={er.text} rating={er.stars} date={new Date()} />))
+                              }
+                            </Gallery>
+                          </div>
+                      }
                       <div className="p-4 border border-gray-300 rounded shadow-md">
-                        <Gallery>
-                          {
-                            eventReviews.map(er => (<ReviewComponent reviewerName={er.name} reviewText={er.text} rating={er.stars} date={new Date()} />))
-                          }
-                        </Gallery>
+                        <h1 className="p-4">Write a review for this event</h1>
+                        <ReviewForm onSubmit={ (reviewerName, reviewText, rating, date) => {
+                          (async () => {
+                            const res = await HttpService.post<void>('reviewcreate', {event: events[0].id, name: reviewerName, stars: rating, text: reviewText});
+                            modalContext.toast!(res.success ? 'success' : 'error', res.messages[0])
+                          })();
+                        } }></ReviewForm>
                       </div>
-                  }
-                  <div className="p-4 border border-gray-300 rounded shadow-md">
-                    <h1>Write a review for this event</h1>
-                    <ReviewForm onSubmit={ (reviewerName, reviewText, rating, date) => {
-                      (async () => {
-                        const res = await HttpService.post<void>('reviewcreate', {event: events[0].id, name: reviewerName, stars: rating, text: reviewText});
-                        modalContext.toast!(res.success ? 'success' : 'error', res.messages[0])
-                      })();
-                    } }></ReviewForm>
-                  </div>
+
+                    </div>
+                  ))
+                }
+                <div className="flex items-center justify-items-center">
 
                 </div>
-              ))
-            }
-            <div className="flex items-center justify-items-center">
-
-            </div>
-          </div>
+              </div>
           }
 
 

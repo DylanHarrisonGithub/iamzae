@@ -63,7 +63,7 @@ export default async (request: any): Promise<RouterResponse> => {
     json: { 
       success: true, 
       messages: [`SERVER - ROUTES - LOGIN - User ${username} successfully logged in.`].concat(res.messages).concat(token.messages),
-      body: { token: token.body! }
+      body: { token: token.body!, user: { username: res.body![0].username, id: res.body![0].id, avatar: res.body![0].avatar } }
     } 
   })); 
 

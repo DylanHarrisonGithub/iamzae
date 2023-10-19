@@ -11,7 +11,7 @@ const AuthService = ((): typeof service extends Service ? typeof service : never
       return new Promise(resolve => resolve({
         success: true,
         messages: [`CLIENT->SERVICES->AUTHSERVICE->STORETOKEN: Token stored successfully.`]
-      }))
+      }));
     },
     retrieveToken: <T=any>(method?: AuthMethod): ServicePromise<T | undefined> => StorageService[method || config.AUTH_TOKEN_STORAGE_METHOD].retrieve('token').then(res => ({
       success: res.success,
@@ -22,7 +22,7 @@ const AuthService = ((): typeof service extends Service ? typeof service : never
       ],
       body: res.body
     })),
-    logout: (method?: AuthMethod): ServicePromise => StorageService[method || config.AUTH_TOKEN_STORAGE_METHOD].store('token', "").then(res => ({
+    logout: (method?: AuthMethod): ServicePromise => StorageService[method || config.AUTH_TOKEN_STORAGE_METHOD].store('token', undefined).then(res => ({
       success: res.success,
       messages: [res.success ?
           `CLIENT->SERVICES->AUTHSERVICE->LOGOUT: Successfully logged out.`

@@ -22,7 +22,7 @@ export default async (request: ParsedRequest<{
 
   if (dbRes.success) {
 
-    const events = (dbRes.body?.map(e => ({ ...e, media: e.media?.split(',') })) as EventPerformance[]);
+    const events = (dbRes.body?.map(e => ({ ...e, media: e.media?.length ? e.media.split(',') : [] })) as EventPerformance[]);
 
     return new Promise(res => res({
       code: 200,
