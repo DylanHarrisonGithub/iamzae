@@ -14,7 +14,7 @@ interface ContactProps {
 
 const ContactCard: React.FC<ContactProps> = ({ contact }) => {
   return (
-    <div className="bg-white p-4 rounded shadow mx-auto text-black">
+    <div className="bg-white p-4 rounded shadow text-black inline-block m-2">
       <div className="mb-4 text-gray-500">
         <strong>Date:</strong> {contact.date}
       </div>

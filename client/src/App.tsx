@@ -59,9 +59,6 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="home" element={<Home />} />
               </Route>
-              {/* <Route path="browse" element={<Browse />}>
-                <Route path=":category" element={<Browse />}/>
-              </Route> */}
               <Route path="contact" element={<Contact />} />
               <Route path="events" element={<Events />} />
               <Route path="events/:id" element={<Events />} />

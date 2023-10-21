@@ -62,7 +62,7 @@ const Admin: React.FC<any> = (props: any) => {
   }, []);
 
   return (
-    <div className='py-16 hex2'>
+    <div className='py-16 bubbles'>
       <div className="card w-11/12 md:w-5/6 bg-base-100 mx-auto mt-16">
         <h1 className="text-center text-4xl font-bold">Admin</h1>
           {/* ------------------------------------------------------- USERS ------------------------------------------------------- */}
@@ -76,6 +76,16 @@ const Admin: React.FC<any> = (props: any) => {
             <Media media={media} setMedia={setMedia} quickGet={quickGet}></Media>
           </ToggleableContainer>
 
+
+          {/* ------------------------------------------------------- Music ------------------------------------------------------- */}
+
+          <ToggleableContainer title="Tracks" color1='red-500'>
+            <div className='text-center'>
+
+            </div>
+
+          </ToggleableContainer>
+
           {/* ------------------------------------------------------- Events ------------------------------------------------------- */}
 
           <ToggleableContainer title="Events" color1='blue-500'>
@@ -85,7 +95,7 @@ const Admin: React.FC<any> = (props: any) => {
 
           {/* ------------------------------------------------------- Reviews ------------------------------------------------------- */}
 
-          <ToggleableContainer title="All Reviews" color1='red-500'>
+          <ToggleableContainer title="All Reviews" color1='purple-500'>
             <Gallery>
               {
                 reviews.map((r, i) => (<ReviewComponent key={i} reviewerName={r.name} reviewText={r.text} rating={r.stars} date={new Date(r.timestamp)}/>))
@@ -96,16 +106,17 @@ const Admin: React.FC<any> = (props: any) => {
           {/* ------------------------------------------------------- Contact ------------------------------------------------------- */}
 
           <ToggleableContainer title="Contact" color1='green-500'>
-            <Gallery2>
+            <div className='text-center'>
               {
                 contacts.map((c, i) => (<ContactCard key={i} contact={{
-                  date: new Date().toISOString(),
+                  date: (new Date(parseInt(c.timestamp.toString()))).toLocaleDateString(),
                   email: c.email,
                   subject: c.subject,
                   message: c.message
                 }}/>))
               }
-            </Gallery2>
+            </div>
+
           </ToggleableContainer>
 
         <hr />

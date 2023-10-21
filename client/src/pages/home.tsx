@@ -44,7 +44,7 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </Hero>
       {/* { JSON.stringify(storageContext) } */}
-      <Hero svg="hex2" translateY={-4}>
+      <Hero svg="bubbles" translateY={-4}>
         <div className="w-11/12 md:w-2/3 glass rounded-lg">
           <Carousel categoryName="Events">
             {

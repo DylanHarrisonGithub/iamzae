@@ -24,7 +24,7 @@ const Hero: React.FC<HeroProps> = (props: HeroProps) => {
         (props.video || props.svg) ?
           undefined
         :
-          { backgroundImage: `url("${config.ASSETS[config.ENVIRONMENT]}media/${props.image ? props.image : 'img_4329.jpg'}` }
+          { backgroundImage: `url("${config.ASSETS[config.ENVIRONMENT]}media/${props.image ? props.image : 'IMG_4329.JPG'}` }
       }
     >
       {

@@ -33,10 +33,11 @@ const GalleryPage: React.FC<any> = (props: any) => {
 
   return (
     <div className="pt-16 diamonds">
-      <div className="container py-16 min-h-screen">
-        <h1 className="text-xl gold-text text-center align-middle inline-block ml-8 pb-8">
+      <h1 className="text-xl gold-text text-center align-middle inline-block ml-2 md:ml-8 mt-16">
           &nbsp;&nbsp;Media Gallery&nbsp;&nbsp;
-        </h1>
+      </h1>
+      <div className="container py-16 min-h-screen  mx-auto">
+
         {
           busy && (
             <div className="flex justify-center items-center h-screen -my-24">
