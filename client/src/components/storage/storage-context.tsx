@@ -23,7 +23,7 @@ const Storage: React.FC<StorageProps> = ({ children, keys }) => {
     const handleStorageChange = async () => {
       //console.log('storageobj', await keys.reduce(async (obj, k) => ({ ...(await obj), [k]: (await StorageService[config.AUTH_TOKEN_STORAGE_METHOD].retrieve(k)).body }), Promise.resolve({})))
       const newStorage = await keys.reduce(async (obj, k) => ({ ...(await obj), [k]: (await StorageService[config.AUTH_TOKEN_STORAGE_METHOD].retrieve(k)).body }), Promise.resolve({}));
-      console.log(newStorage)
+      // console.log('storage update', newStorage)
       setStorageObj(newStorage);
     };
 

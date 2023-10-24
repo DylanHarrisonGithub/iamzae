@@ -10,7 +10,7 @@ interface CalendarProps {
 }
 
 const daysInMonth = (year: number, month: number): number => {
-  return new Date(year, month + 1, 0).getDate();
+  return new Date(year, month+1, 0).getDate();
 };
 
 const getFirstDayIndex = (year: number, month: number): number => {
@@ -19,7 +19,7 @@ const getFirstDayIndex = (year: number, month: number): number => {
 
 const generateCalendarDays = (year: number, month: number): number[] => {
   const totalDays = daysInMonth(year, month);
-  const firstDayIndex = getFirstDayIndex(year, month - 1);
+  const firstDayIndex = getFirstDayIndex(year, month);
   
   const days = Array.from({ length: firstDayIndex }, () => 0); // Fill empty slots with 0
   for (let day = 1; day <= totalDays; day++) {
@@ -31,7 +31,7 @@ const generateCalendarDays = (year: number, month: number): number[] => {
 
 const Calendar: React.FC<CalendarProps> = ({ year, month, onDayClick, highlights, controls, onCalendarChange }) => {
   
-  const [calendarDays, setCalendarDays] = React.useState(generateCalendarDays(year, month - 1));
+  const [calendarDays, setCalendarDays] = React.useState(generateCalendarDays(year, month));
   const [internalYear, setInternalYear] = React.useState(year);
   const [internalMonth, setInternalMonth] = React.useState(month);
 
@@ -46,6 +46,7 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, onDayClick, highlights
       <div className='glass2 w-full h-full'>
 
         <h2 className="text-lg pt-4 text-blue-600 font-semibold text-center">
+          {/* { JSON.stringify(highlights) } */}
           { controls && (
             <svg xmlns="http://www.w3.org/2000/svg" height="2em" viewBox="0 0 320 512" className='inline pb-1 mx-12 hover:cursor-pointer hover:text-blue-600'
               onClick={() => {
@@ -57,7 +58,7 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, onDayClick, highlights
               }}
             ><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
           )}
-          {new Date(internalYear, internalMonth - 1).toLocaleString('default', { year: 'numeric' })}
+          {new Date(internalYear, internalMonth).toLocaleString('default', { year: 'numeric' })}
           { controls && (
             <svg xmlns="http://www.w3.org/2000/svg" height="2em" viewBox="0 0 320 512" className='inline pb-1 mx-12 hover:cursor-pointer hover:text-blue-600'
               onClick={() => {
@@ -78,7 +79,7 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, onDayClick, highlights
               }}
             ><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
           )}
-          {new Date(internalYear, internalMonth - 1).toLocaleString('default', { month: 'long' })}
+          {new Date(internalYear, internalMonth).toLocaleString('default', { month: 'long' })}
           { controls && (
             <svg xmlns="http://www.w3.org/2000/svg" height="2em" viewBox="0 0 320 512" className='inline pb-1 mx-12 hover:cursor-pointer hover:text-blue-600'
               onClick={() => {

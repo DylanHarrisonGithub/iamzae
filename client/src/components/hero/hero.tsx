@@ -21,10 +21,11 @@ const Hero: React.FC<HeroProps> = (props: HeroProps) => {
     <div 
       className={`relative w-full min-h-screen flex justify-center items-center ${props.svg ? props.svg : `bg-cover bg-center`}`} 
       style={
-        (props.video || props.svg) ?
-          undefined
-        :
-          { backgroundImage: `url("${config.ASSETS[config.ENVIRONMENT]}media/${props.image ? props.image : 'IMG_4329.JPG'}` }
+        props.image ?
+        { backgroundImage: `url("${config.ASSETS[config.ENVIRONMENT]}media/${props.image}` }
+      :
+        undefined
+
       }
     >
       {

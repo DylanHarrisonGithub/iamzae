@@ -42,7 +42,7 @@ const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
     <div className="relative m-2">
       {
         //props.categoryName &&2336 2720 -= 384
-          <h2 className="inline-block text-white">{props.categoryName}</h2>
+          <h2 className="inline-block text-black">{props.categoryName}</h2>
       }
       {
         !props.disableBrowseAll &&

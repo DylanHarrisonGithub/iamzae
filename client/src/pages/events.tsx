@@ -100,6 +100,12 @@ const Events: React.FC<any> = (props: any) => {
               onInput={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
             />
           </div>
+          <h1 className="text-white mx-8">{ 
+            search ? 
+              `Results for ${search}` 
+            : 
+              id ? `` : `All Events`
+          }</h1>
           {
             busy && 
               <div className="flex justify-center mt-40">
@@ -108,7 +114,6 @@ const Events: React.FC<any> = (props: any) => {
           }
           { (events && events.length && events.length > 1) &&
             <div className="mx-1 md:mx-5">
-              <h1 className="text-white mx-8">{ search ? `Results for ${search}` : `All Events`}</h1>
               <Carousel disableBrowseAll onScrollRightEnd={()=> {
                 setBusy(true);
                 if (searchParams.get('search')) {

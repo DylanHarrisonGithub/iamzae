@@ -6,6 +6,20 @@ import config from '../../config/config';
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
 
+const periodPrases = (e: EventPerformance): string => {
+  let { year, month, day, period } = (e as EventPerformance);
+  const dayNum = (new Date(year, months.indexOf(month), day)).getDay();
+  const weekday: typeof weekdays[number] = weekdays[dayNum];
+  const dayCount = Math.floor((day-1) / 7) + 1;
+  const dayCountSuffix = [ 'st', 'nd', 'rd', 'th', 'th' ];
+  return ({
+    Once: ``,
+    Daily: `Every day`,
+    Weekly: `Every ${weekday}`,
+    BiWeekly: `Every other ${weekday}`,
+    Monthly: `The ${dayCount}${dayCountSuffix[dayCount-1]} ${weekday} of every month`
+  })[period];
+};
 
 type EventListItemProps = {
   event: EventPerformance;
@@ -27,9 +41,12 @@ const MiniEventDetail: React.FC<EventListItemProps> = ({ event }) => {
         } alt="Event Thumbnail" className="object-cover w-full h-full rounded" />
       </div>
       <div className="flex-grow">
+        { !(event.period === 'Once') &&
+          <div className='text-lg font-semibold'>{periodPrases(event)}<span className='text-md text-gray-600'>&nbsp;starting&nbsp;</span></div>
+        }
         <div className="flex items-center mb-2 space-x-2">
           <div className="text-lg font-semibold">{event.month} {event.day}, {event.year}</div>
-          <div className="text-gray-600">{event.time}</div>
+          <div className="text-gray-600">{` at ${event.time}`}</div>
         </div>
         <div className="text-lg font-medium mb-2">{event.location}</div>
         <div className="text-gray-700 mb-4">{event.description}</div>

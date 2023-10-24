@@ -6,6 +6,7 @@ import config from '../config/config';
 import HttpService from '../services/http.service';
 
 import { ModalContext } from '../components/modal/modal';
+import { StorageContext } from '../components/storage/storage-context';
 
 import { User, EventPerformance, Review, Contact } from '../models/models';
 import ToggleableContainer from '../components/toggleable-container/toggleable-container';
@@ -17,6 +18,9 @@ import ReviewComponent from '../components/review/review';
 import ReviewForm from '../components/review/review-form';
 import ContactCard from '../components/admin/contact/contact-card';
 import Gallery2 from '../components/gallery/gallery2';
+
+import { useNavigate } from 'react-router-dom';
+
 
 const acceptedMedia = [
   'gif', 'jpg', 'jpeg', 'png',
@@ -35,6 +39,8 @@ const acceptedMedia = [
 const Admin: React.FC<any> = (props: any) => {
 
   const modalContext = React.useContext(ModalContext);
+  const storageContext = React.useContext(StorageContext);
+  const navigate = useNavigate();
 
   const [media, setMedia] = React.useState<string[]>([]);
   const [users, setUsers] = React.useState<User[]>([]);
@@ -57,14 +63,20 @@ const Admin: React.FC<any> = (props: any) => {
 
   React.useEffect(() => {
     (async () => {
-      setContacts(await quickGet<Contact[]>('contactstream', { afterID: 0, numrows: 10 }) || []);
+      if (storageContext.token) {
+        setContacts(await quickGet<Contact[]>('contactstream', { afterID: 0, numrows: 10 }) || []);
+      } else {
+        navigate('/login');
+      }
     })();
   }, []);
 
   return (
     <div className='py-16 bubbles'>
-      <div className="card w-11/12 md:w-5/6 bg-base-100 mx-auto mt-16">
-        <h1 className="text-center text-4xl font-bold">Admin</h1>
+      <h1 className="text-xl gold-text text-center align-middle inline-block ml-2 md:ml-8 mt-16">
+        &nbsp;&nbsp;Admin&nbsp;&nbsp;
+      </h1>
+      <div className="card w-11/12 md:w-5/6 mx-auto mt-16">
           {/* ------------------------------------------------------- USERS ------------------------------------------------------- */}
 
           <ToggleableContainer title="Users" color1='purple-500'>

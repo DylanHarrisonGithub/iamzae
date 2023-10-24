@@ -20,7 +20,7 @@ const periodPrases = (e: EventPerformance | FormEvent): string => {
     ([...periods] as any[]).includes(e.period)
   ) {
     let { year, month, day, period } = (e as EventPerformance);
-    const dayNum = (new Date(year, months.indexOf(month), day)).getDay()
+    const dayNum = (new Date(year, months.indexOf(month), day)).getDay();
     const weekday: typeof weekdays[number] = weekdays[dayNum];
     const dayCount = Math.floor((day-1) / 7) + 1;
     const dayCountSuffix = [ 'st', 'nd', 'rd', 'th', 'th' ];

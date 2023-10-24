@@ -68,7 +68,7 @@ const Contact: React.FC<any> = () => {
   };
 
   return (
-    <div className="py-16 px-4 mx-auto hex2">
+    <div className="py-16 px-4 mx-auto diamonds">
       <div className="mt-16 glass md:w-3/4 mx-auto border-2 rounded-lg p-8 shadow-2xl">
         <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">Contact Me</h2>
         <p className="mb-8 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">Got a technical issue? Want to book me for a show? Need details about my availability? Let me know.</p>
