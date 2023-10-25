@@ -23,7 +23,7 @@ const HttpService = ((): typeof service extends Service ? typeof service : never
       if (params) {
         route += '?' + new URLSearchParams(params).toString();
       }
-  
+
       return fetch(
         url || (config.URI[config.ENVIRONMENT] + "api/" + route),
         options

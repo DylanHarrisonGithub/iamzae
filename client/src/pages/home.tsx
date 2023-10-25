@@ -8,12 +8,13 @@ import Calendar from "../components/calendar/calendar";
 import QuickForm from "../components/quick-form/quick-form";
 import { COMMON_REGEXES } from "../services/validation.service";
 
-import { EventPerformance } from "../models/models";
+import { EventPerformance, Review } from "../models/models";
 import MiniEventDetail from "../components/mini-event-detail/mini-event-detail";
 
 import { StorageContext } from "../components/storage/storage-context";
 import HttpService from "../services/http.service";
 import { timeData } from "../models/models";
+import ReviewComponent from "../components/review/review";
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
 
@@ -41,6 +42,8 @@ const lorem = new LoremIpsum({
 const Home: React.FC<any> = (props: any) => {
 
   const [events, setEvents] = React.useState<EventPerformance[]>([]);
+  const [reviews, setReviews] = React.useState<Review[]>([]);
+
   const [calendarDays, setCalendarDays] = React.useState<{ [key in typeof months[number]]: { day: number, eventID: number }[]}>({ //months.reduce((a,m) => ({...a, [m]: []}), {});
     January: [],
     February: [],
@@ -56,6 +59,7 @@ const Home: React.FC<any> = (props: any) => {
     December: [],
   });
   const [busy, setBusy] = React.useState<boolean>(true);
+  const [busy2, setBusy2] = React.useState<boolean>(true);
 
   const navigate = useNavigate();
   // const events: EventPerformance[] = [
@@ -112,6 +116,12 @@ const Home: React.FC<any> = (props: any) => {
       } else {
         console.log(res);
       }
+      setBusy2(true);
+      const res2 = await HttpService.get<Review[]>('approvedreviewstream', { afterID: 0, numrows: 10 });
+      if (res2.success && res2.body) {
+        setReviews(res2.body);
+      }   
+      setBusy2(false);
     })();
   }, []);
 
@@ -127,7 +137,7 @@ const Home: React.FC<any> = (props: any) => {
           {/* <button className="btn btn-primary">Get Started</button> */}
         </div>
       </Hero>
-      {/* { JSON.stringify(storageContext) } */}
+
       <Hero translateY={-4}>
         <div className="w-11/12 md:w-2/3 bg-white bg-opacity-75 rounded-lg">
           <Carousel categoryName="Events">
@@ -166,7 +176,25 @@ Sample pads and drum machines add dynamic layers, while synthesizers contribute 
         </div>
       </Hero>
 
-      <Hero />
+      <Hero>
+        { busy2 &&
+          <li className="flex justify-center my-40">
+            <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          </li>
+        }
+        {
+          reviews &&
+            <div>
+              {
+                reviews.map((r,i) => (
+                  <div className="block w-full">
+                    <ReviewComponent key={i} reviewerName={r.name} reviewText={r.text} rating={r.stars} date={new Date(parseInt(r.timestamp.toString()))}></ReviewComponent>
+                  </div>
+                ))
+              }
+            </div>
+        }
+      </Hero>
       <Hero svg="diamonds">
         <div 
           className={`w-full md:w-1/2 lg:w-1/3 m-8 p-4 glass-light rounded-lg text-center ${

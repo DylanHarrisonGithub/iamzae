@@ -44,7 +44,7 @@ const Events: React.FC<any> = (props: any) => {
       HttpService.get<EventPerformance[]>('eventstream', { afterID: 0, numrows: 10, id: id }).then(res => {
         if (res.success && res.body) {
           setEvents(res.body);
-          HttpService.get<Review[]>('reviewstream', { afterID: 0, numrows: 10 }).then(rev => {
+          HttpService.get<Review[]>('approvedreviewstream', { afterID: 0, numrows: 10, event: id }).then(rev => {
             if (rev.success && rev.body) {
               setEventReviews(rev.body);
             }
@@ -57,7 +57,15 @@ const Events: React.FC<any> = (props: any) => {
       HttpService.get<EventPerformance[]>('eventstream', { afterID: 0, numrows: 10, search: searchParams.get('search') }).then(res => {
         if (res.success && res.body) {
           setEvents(res.body);
+          if (res.body.length === 1) {
+            HttpService.get<Review[]>('approvedreviewstream', { afterID: 0, numrows: 10, event: res.body[0].id }).then(rev => {
+              if (rev.success && rev.body) {
+                setEventReviews(rev.body);
+              }
+            });
+          }
         }
+        res.messages.forEach(m => modalContext.toast!('info', m));
         setBusy(false);
         init.current=false;
       });
@@ -148,7 +156,7 @@ const Events: React.FC<any> = (props: any) => {
               <div className="mx-auto my-6 glass">
                 {
                   events.map((ev, i) => (
-                    <div className="border-gray-200 rounded p-1 shadow-2xl">
+                    <div key={i} className="border-gray-200 rounded p-1 shadow-2xl">
                       <div className="hidden md:block"><MiniEventDetail key={i} event={ev} /></div>
                       <div className="md:hidden"><VerticalEventDetail key={i} event={ev} /></div>
                       <div className="p-4 border border-gray-300 rounded shadow-md">
@@ -227,25 +235,26 @@ const Events: React.FC<any> = (props: any) => {
                         
                       </div>
                       
-                      {
-                        (!!(eventReviews?.length)) && 
-                          <div className="p-4 border border-gray-300 rounded shadow-md">
-                            <h1 className="p-4">Reviews for this event</h1>
-                            <Gallery>
+
+                      <div className="p-4 border border-gray-300 rounded shadow-md">
+                        <h1 className="p-4">Reviews for this event</h1>
+                        {
+                          (!!(eventReviews?.length)) && 
+                            <div className="text-center">
                               {
-                                eventReviews.map(er => (<ReviewComponent reviewerName={er.name} reviewText={er.text} rating={er.stars} date={new Date()} />))
+                                eventReviews.map((er, i) => (<ReviewComponent key={i} reviewerName={er.name} reviewText={er.text} rating={er.stars} date={new Date()} />))
                               }
-                            </Gallery>
-                          </div>
-                      }
+                            </div>
+                        }
+                        {
+                          !(eventReviews?.length) && 
+                            <div className="py-10 text-center">No reviews for this event</div>
+                        }
+                      </div>
+
                       <div className="p-4 border border-gray-300 rounded shadow-md">
                         <h1 className="p-4">Write a review for this event</h1>
-                        <ReviewForm onSubmit={ (reviewerName, reviewText, rating, date) => {
-                          (async () => {
-                            const res = await HttpService.post<void>('reviewcreate', {event: events[0].id, name: reviewerName, stars: rating, text: reviewText});
-                            modalContext.toast!(res.success ? 'success' : 'error', res.messages[0])
-                          })();
-                        } }></ReviewForm>
+                        <ReviewForm eventID={ev.id}></ReviewForm>
                       </div>
 
                     </div>

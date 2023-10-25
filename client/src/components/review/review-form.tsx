@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import ValidationService, { Schema, COMMON_REGEXES } from "../../services/validation.service";
+import HttpService from "../../services/http.service";
+
+import { ModalContext } from "../modal/modal";
 
 type FormState = {
   reviewerName: string;
@@ -20,12 +23,14 @@ const reviewSchema: Schema = {
   reviewText: { type: COMMON_REGEXES.COMMON_WRITING, attributes: { required: true, strLength: { minLength: 4, maxLength: 500 } }}
 }
 
-const ReviewForm: React.FC<{ onSubmit: (reviewerName: string, reviewerText: string, rating: number, date: string) => any }> = ({ onSubmit }) => {
+const ReviewForm: React.FC<{ eventID: number }> = ({ eventID }) => {
 
   const firstRender = React.useRef<number>(2);
   const [touched, setTouched] = React.useState<boolean>(false);
   const [formErrors, setFormErrors] = React.useState<{ [key: string]: string[] }>({});
   const [formData, setFormData] = useState<FormState>(initialFormState);
+
+  const modalContext = React.useContext(ModalContext);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,7 +48,10 @@ const ReviewForm: React.FC<{ onSubmit: (reviewerName: string, reviewerText: stri
     setTouched(false);
 
     const { reviewerName, reviewText, rating, date } = formData;
-    onSubmit(reviewerName, reviewText, rating, date);
+
+    const res = await HttpService.post<void>('reviewcreate', { event: eventID, name: reviewerName, stars: rating, text: reviewText });
+    modalContext.toast!(res.success ? 'success' : 'error', res.messages[0]);
+
   };
 
   React.useEffect(() => {
@@ -133,7 +141,7 @@ const ReviewForm: React.FC<{ onSubmit: (reviewerName: string, reviewerText: stri
             type="submit" 
             className="btn btn-primary ml-auto"
             disabled={!touched || !!Object.keys(formErrors).length}
-            onClick={() => onSubmit(formData.reviewerName, formData.reviewText, formData.rating, formData.date)}
+            onClick={handleSubmit}
           >
             Submit
           </button>

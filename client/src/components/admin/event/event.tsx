@@ -73,7 +73,6 @@ const EventsComponent: React.FC<EventComponentProps> = ({events, mediaList, setE
 
   React.useEffect(() => {
     if (!init.current) {
-      console.log('hi')
       setAllEventsListed(false);
       setBusy2(true);
       busy.current = true;

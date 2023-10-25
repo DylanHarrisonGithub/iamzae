@@ -13,7 +13,7 @@ const config: {
   URI: {
     DEVELOPMENT: "http://localhost:3000/",
     LAN: "",
-    PRODUCTION: ""
+    PRODUCTION: "/"
   },
   ASSETS: {
     DEVELOPMENT: "http://localhost:3000/public/",

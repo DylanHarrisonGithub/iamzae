@@ -28,7 +28,7 @@ type EventListItemProps = {
 
 const VerticalEventDetail: React.FC<EventListItemProps> = ({ event }) => {
   return (
-    <div className="p-1 border border-gray-300 rounded shadow-md">
+    <div className="p-1 border border-gray-300 rounded shadow-md h-full">
       <div className="m-4 aspect-1">
         <img src={
           (

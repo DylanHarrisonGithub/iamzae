@@ -1,3 +1,5 @@
+import approvedreviewstreamRoute from './approvedreviewstream/approvedreviewstream.route';
+import approvedreviewstreamSchema from './approvedreviewstream/approvedreviewstream.schema';
 import contactstreamRoute from './contactstream/contactstream.route';
 import contactstreamSchema from './contactstream/contactstream.schema';
 import contactdeleteRoute from './contactdelete/contactdelete.route';
@@ -50,6 +52,13 @@ export interface Route {
 }
 
 const routes: { [key: string]: Route } = {
+ approvedreviewstream: {
+    method: ['GET'],
+    contentType: "application/json",
+    privilege: ['guest'],
+    schema: approvedreviewstreamSchema,
+    route: approvedreviewstreamRoute 
+  },
  contactstream: {
     method: ['GET'],
     contentType: "application/json",
@@ -74,7 +83,7 @@ const routes: { [key: string]: Route } = {
  reviewstream: {
     method: ['GET'],
     contentType: "application/json",
-    privilege: ['guest'],
+    privilege: ['user'],
     schema: reviewstreamSchema,
     route: reviewstreamRoute 
   },

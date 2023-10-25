@@ -57,7 +57,7 @@ export type Review = {
   id: number,
   event: number,
   timestamp: number,
-  approved: boolean,
+  approved: string,
   name: string,
   stars: number,
   text: string,

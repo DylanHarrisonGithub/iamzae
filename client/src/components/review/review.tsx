@@ -23,7 +23,7 @@ const ReviewComponent: React.FC<ReviewProps> = ({ reviewerName, reviewText, rati
   }).format(date);
 
   return (
-    <div className="bg-white p-4 rounded shadow mx-auto w-64 md:w-48 lg:w-64">
+    <div className="bg-white p-4 rounded shadow inline-block h-full mx-auto my-2 text-left align-top w-full ">
       <h3 className="text-xl font-semibold mb-2 text-black">{reviewerName}</h3>
       <StarRating rating={rating} />
       <p className="text-gray-700 mt-2">{reviewText}</p>

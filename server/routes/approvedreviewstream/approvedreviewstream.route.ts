@@ -15,18 +15,18 @@ export default async (request: ParsedRequest<{
 
   const dbRes = 
     id ?
-      await DB.row.read<any[]>('review', { id: id })
+      await DB.row.read<any[]>('review', { id: id, approved: 'true' })
     :
       search ?
         event ?
-          await DB.row.query(`SELECT * FROM "review" WHERE event = ${event} AND search ILIKE '%${search}%' AND id > ${afterID} ORDER BY id ASC LIMIT ${numrows};`)
+          await DB.row.query(`SELECT * FROM "review" WHERE event = ${parseInt(event.toString())} AND approved = 'true' AND search ILIKE '%${search}%' AND id > ${afterID} ORDER BY id ASC LIMIT ${numrows};`)
         :
-          await DB.row.query(`SELECT * FROM "review" WHERE search ILIKE '%${search}%' AND id > ${afterID} ORDER BY id ASC LIMIT ${numrows};`)//DB.row.stream<any[]>('event', afterID, numrows)
+          await DB.row.query(`SELECT * FROM "review" WHERE approved = 'true' AND search ILIKE '%${search}%' AND id > ${afterID} ORDER BY id ASC LIMIT ${numrows};`)//DB.row.stream<any[]>('event', afterID, numrows)
       :
         event ?
-          await DB.row.stream<any[]>('review', afterID, numrows,{ event: event })
+          await DB.row.stream<any[]>('review', afterID, numrows, { event: parseInt(event.toString()), approved: 'true' })
         :
-          await DB.row.stream<any[]>('review', afterID, numrows);
+          await DB.row.stream<any[]>('review', afterID, numrows, { approved: 'true' });
 
   if (dbRes.success) {
 
@@ -37,7 +37,7 @@ export default async (request: ParsedRequest<{
       json: {
         success: true,
         messages: [  
-          `SERVER - ROUTES - REVIEWSTREAM - Reviews streamed.`
+          `SERVER - ROUTES - APPROVEDREVIEWSTREAM - Reviews streamed.`
         ].concat(dbRes.messages),
         body: reviews
       }
@@ -48,7 +48,7 @@ export default async (request: ParsedRequest<{
       json: {
         success: false,
         messages: [  
-          `SERVER - ROUTES - REVIEWSTREAM - Reviews could not be streamed.`
+          `SERVER - ROUTES - APPROVEDREVIEWSTREAM - Reviews could not be streamed.`
         ].concat(dbRes.messages),
         body: request.params
       }

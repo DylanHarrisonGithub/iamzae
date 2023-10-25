@@ -59,6 +59,7 @@ app.use('/api', async (request: express.Request, response: express.Response) => 
 });
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client')));
+app.get('/*', (req, res) => res.sendFile(path.resolve(__dirname, './client', 'index.html')))
 
 app.listen(process.env.PORT || 3000, async () => {
   console.log(`CrudStore listening on port ${process.env.PORT || 3000}`);
