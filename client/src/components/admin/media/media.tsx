@@ -26,7 +26,7 @@ const Media: React.FC<Props> = ({media, setMedia, quickGet}) => {
 
   React.useEffect(() => {
     if (init.current) {
-      quickGet<string[]>('medialist').then(res => setMedia(res ? ['https://img-getpocket.cdn.mozilla.net/296x148/filters:format(jpeg):quality(60):no_upscale():strip_exif()/https%3A%2F%2Fs.zkcdn.net%2FAdvertisers%2F549ca9e40e6f4f83931b10792225952a.png', ...res.filter(m => acceptedMedia.filter(accepted => m.toLowerCase().endsWith(accepted)).length)] : []));
+      quickGet<string[]>('medialist').then(res => setMedia(res ? [...res.filter(m => acceptedMedia.filter(accepted => m.toLowerCase().endsWith(accepted)).length)] : []));
       init.current = false;
     }
   }, [media]);

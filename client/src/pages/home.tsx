@@ -127,9 +127,9 @@ const Home: React.FC<any> = (props: any) => {
 
   const storageContext = React.useContext(StorageContext);
   return (
-    <div className="fan px-4 md:px-16">
-
-      <Hero video="dba28b2adc4d4a289d46b56c99cd327f.mov">
+    <div className="fan pt-16 px-2 md:px-8">
+ {/* translateX={(document.body.clientWidth > 1200) ? 20 : undefined} */}
+      <Hero video="mymovie1.mp4" translateY={-4} > 
         <div className={`w-full md:w-1/2 lg:w-1/3 m-8 p-4 glass-light rounded-lg text-center`}>
           <h1 className="mb-5 text-5xl font-bold gold-text">IAMZAE</h1>
           <p className="mb-5 gold-text">
@@ -138,8 +138,8 @@ const Home: React.FC<any> = (props: any) => {
         </div>
       </Hero>
 
-      <Hero translateY={-4}>
-        <div className="w-11/12 md:w-2/3 bg-white bg-opacity-75 rounded-lg">
+      <Hero translateY={-8}>
+        <div className="w-full md:w-11/12 bg-white bg-opacity-75 rounded-lg">
           <Carousel categoryName="Events">
             {
               Array.from(Array(12)).map((n, i) => (
@@ -154,7 +154,12 @@ const Home: React.FC<any> = (props: any) => {
           <ul>
             {
               events.map((event, index) => (
-                <MiniEventDetail key={index} event={event} />
+                <div 
+                  className="cursor-pointer hover:p-1 hover:bg-white"
+                  onClick={() => navigate(`/events/${event.id}`)}
+                >
+                  <MiniEventDetail key={index} event={event} />
+                </div>
               ))
             }
             { busy &&
@@ -177,10 +182,11 @@ Sample pads and drum machines add dynamic layers, while synthesizers contribute 
       </Hero>
 
       <Hero>
-        { busy2 &&
-          <li className="flex justify-center my-40">
-            <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-          </li>
+        { 
+          busy2 &&
+            <li className="flex justify-center my-40">
+              <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            </li>
         }
         {
           reviews &&

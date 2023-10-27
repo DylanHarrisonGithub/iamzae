@@ -141,7 +141,7 @@ const Admin: React.FC<any> = (props: any) => {
                         </button>
                       :
                         <button 
-                          className="btn btn-circle btn-lg shadow-xl btn-info border-2 border-black absolute top-2 right-20"
+                          className="btn btn-circle btn-lg shadow-xl btn-warning border-2 border-black absolute top-2 right-20"
                           onClick={async () => {
                             const res = await HttpService.patch<void>('reviewupdate', { id: r.id, update: { approved: true } });
                             if (res.success) {

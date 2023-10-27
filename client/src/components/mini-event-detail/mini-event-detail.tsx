@@ -50,9 +50,9 @@ const MiniEventDetail: React.FC<EventListItemProps> = ({ event }) => {
         </div>
         <div className="text-lg font-medium mb-2">{event.location}</div>
         <div className="text-gray-700 mb-4">{event.description}</div>
-        <a href={event.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+        {/* <a href={event.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
           Learn More
-        </a>
+        </a> */}
       </div>
     </li>
   );
