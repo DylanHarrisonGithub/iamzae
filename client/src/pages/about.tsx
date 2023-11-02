@@ -2,7 +2,7 @@ import React from "react";
 
 const About: React.FC<any> = (props: any) => {
   return (
-    <div className="py-16 px-4 mx-auto fan">
+    <div className="py-16 px-4 mx-auto diamonds">
       <div className="container py-16 min-h-screen">
         <h1 className="text-xl gold-text text-center align-middle inline-block ml-8 pb-8">
           &nbsp;&nbsp;About&nbsp;&nbsp;

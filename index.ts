@@ -62,21 +62,19 @@ app.use(express.static(path.join(__dirname, 'client')));
 app.get('/*', (req, res) => res.sendFile(path.resolve(__dirname, './client', 'index.html')))
 
 app.listen(process.env.PORT || 3000, async () => {
-  console.log(`CrudStore listening on port ${process.env.PORT || 3000}`);
+  console.log(`iamzae listening on port ${process.env.PORT || 3000}`);
 
   // full db delete
   // for (const key of Object.keys(server.models)) {
   //   console.log((await db.table.delete(key)).messages);
   // }
 
-  // console.log(await db.table.delete('contact'));
+  // console.log(await db.table.delete('event'));
   
   // //!!!! uncomment before deploying !!!!
   // for (const key of Object.keys(server.models)) {
   //   console.log((await db.table.create(key, (<any>server.models)[key])).messages);
   // }
 
-  // console.log(await db.row.stream('user', 5, 3));
-
-  console.log(os.hostname());
+  console.log('host: ' + os.hostname());
 });

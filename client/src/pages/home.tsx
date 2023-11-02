@@ -1,123 +1,50 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { LoremIpsum } from 'lorem-ipsum';
 
-import Carousel from "../components/carousel/carousel";
 import Hero from "../components/hero/hero";
-import Calendar from "../components/calendar/calendar";
-import QuickForm from "../components/quick-form/quick-form";
-import { COMMON_REGEXES } from "../services/validation.service";
+import MiniEventDetail from "../components/mini-event-detail/mini-event-detail";
+import ReviewComponent from "../components/review/review";
+import EventsCalendar from "../components/events-calendar/events-calendar";
+
+import HttpService from "../services/http.service";
 
 import { EventPerformance, Review } from "../models/models";
-import MiniEventDetail from "../components/mini-event-detail/mini-event-detail";
-
-import { StorageContext } from "../components/storage/storage-context";
-import HttpService from "../services/http.service";
-import { timeData } from "../models/models";
-import ReviewComponent from "../components/review/review";
-
-const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
-
-
-function getNthDayInMonth(nth: number, day: typeof weekdays[number], month: typeof months[number], year: number) {
-  // Create new date for 1st of month
-  let d = new Date(year, months.indexOf(month));
-  // Move to first instance of day in month and 
-  // add (n - 1) weeks
-  d.setDate(1 + (7 - d.getDay() + weekdays.indexOf(day))%7 + (nth - 1)*7);
-  return d;
-};
-
-const lorem = new LoremIpsum({
-  sentencesPerParagraph: {
-    max: 8,
-    min: 4
-  },
-  wordsPerSentence: {
-    max: 12,
-    min: 8
-  }
-});
 
 const Home: React.FC<any> = (props: any) => {
 
   const [events, setEvents] = React.useState<EventPerformance[]>([]);
   const [reviews, setReviews] = React.useState<Review[]>([]);
 
-  const [calendarDays, setCalendarDays] = React.useState<{ [key in typeof months[number]]: { day: number, eventID: number }[]}>({ //months.reduce((a,m) => ({...a, [m]: []}), {});
-    January: [],
-    February: [],
-    March: [],
-    April: [],
-    May: [],
-    June: [],
-    July: [],
-    August: [],
-    September: [],
-    October: [],
-    November: [],
-    December: [],
-  });
   const [busy, setBusy] = React.useState<boolean>(true);
   const [busy2, setBusy2] = React.useState<boolean>(true);
 
   const navigate = useNavigate();
-  // const events: EventPerformance[] = [
-  //   // Fill in your event data here
-  //   { id: -1, timestamp: -1, period: 'Once', day: 2, month: 'August', year: 2023, time: '23:30', location: 'highdive', thumbnail: 'https://s3-media0.fl.yelpcdn.com/bphoto/0ahKIlF_TnvOOTReu_IJcg/o.jpg', description: `The anticipation is building as I look forward to my upcoming debut at [Establishment Name]. The reputation of the venue as a hub for music enthusiasts and its state-of-the-art sound system has me buzzing with excitement. I can't wait to unleash my sound, create an unforgettable vibe, and connect with the crowd in this incredible space.`, website: '/', media: []},
-  //   { id: -1, timestamp: -1, period: 'Once',  day: 5, month: 'August', year: 2023, time: '7:00', location: 'safe house', thumbnail: `https://s3.amazonaws.com/gry-cms/safehouse-milwaukee//mural%20edit.jpg`, description: `Playing at [Establishment Name] was an absolute thrill from start to finish. The energy of the crowd was electrifying, and the synergy between the music and the atmosphere was truly magical. Seeing the dancefloor come alive and feeling the audience's energy fuel my set was an experience that will stay with me forever.`, website: '/', media: []},
-  // ];
+
+  const streamEvents = async (afterID?: number) => {
+    const res = await HttpService.get<EventPerformance[]>('eventstream', { afterID: afterID || 0, numrows: 10, search: (new Date()).getFullYear() });
+    if (!(res && res.success && res.body && res.body.length)) {
+      setBusy(false);
+      console.log(res);
+      return;
+    } 
+    setEvents(evs => {
+      const newEvs = [...evs, ...res.body!.filter(e => !evs.some(oe => oe.id === e.id))];
+      if (res.body!.length === 10) {
+        streamEvents(newEvs.at(-1)!.id);
+      } else {
+        setBusy(false);
+      }
+      return newEvs;
+    });
+  }
+
   React.useEffect(() => {
     (async () => {
       setBusy(true);
-      const res = await HttpService.get<EventPerformance[]>('eventstream', { afterID: 0, numrows: 10, search: (new Date()).getFullYear() });
-      if (res && res.success && res.body) {
-        const tempNewEvents: EventPerformance[] = [...events, ...res.body.filter(e => !events.some(oe => oe.id === e.id))];
-        setCalendarDays(cd => {
-          tempNewEvents.forEach(e => cd[e.month].push({ day: parseInt(e.day.toString()), eventID: e.id }));
-          tempNewEvents.filter(e => e.period === 'Daily').forEach(e => {
-            let d = new Date(e.year, months.indexOf(e.month), e.day);
-            while (d.getFullYear() === 2023) {
-              cd[months[d.getMonth()]].push({ day: parseInt(d.getDate().toString()), eventID: e.id });
-              d.setDate(d.getDate() + 1);
-            }
-          });
-          tempNewEvents.filter(e => e.period === 'Weekly').forEach(e => {
-            let d = new Date(e.year, months.indexOf(e.month), e.day);
-            while (d.getFullYear() === 2023) {
-              cd[months[d.getMonth()]].push({ day: parseInt(d.getDate().toString()), eventID: e.id });
-              d.setDate(d.getDate() + 7);
-            }
-          });
-          tempNewEvents.filter(e => e.period === 'BiWeekly').forEach(e => {
-            let d = new Date(e.year, months.indexOf(e.month), e.day);
-            while (d.getFullYear() === 2023) {
-              cd[months[d.getMonth()]].push({ day: parseInt(d.getDate().toString()), eventID: e.id });
-              d.setDate(d.getDate() + 14);
-            }
-          });
-          tempNewEvents.filter(e => e.period === 'Monthly').forEach(e => {
-            let d = new Date(e.year, months.indexOf(e.month));
-            const dayNum = (new Date(e.year, months.indexOf(e.month), e.day)).getDay();
-            const weekday: typeof weekdays[number] = weekdays[dayNum];
-            const dayCount = Math.floor((e.day-1) / 7) + 1;
-            let eDay: Date;
-            while (d.getFullYear() === 2023) {
-              eDay = getNthDayInMonth(dayCount, weekday, months[d.getMonth()], e.year);
-              cd[months[d.getMonth()]].push({ day: eDay.getDate(), eventID: e.id });
-              d = new Date(e.year, d.getMonth() + 1);
-            }
-          });
-          return cd
-        });
-        setEvents(res.body || []);
+      streamEvents();
 
-        setBusy(false);
-      } else {
-        console.log(res);
-      }
       setBusy2(true);
-      const res2 = await HttpService.get<Review[]>('approvedreviewstream', { afterID: 0, numrows: 10 });
+      const res2 = await HttpService.get<Review[]>('approvedreviewstream', { afterID: 0, numrows: 5 });
       if (res2.success && res2.body) {
         setReviews(res2.body);
       }   
@@ -125,10 +52,9 @@ const Home: React.FC<any> = (props: any) => {
     })();
   }, []);
 
-  const storageContext = React.useContext(StorageContext);
   return (
     <div className="fan pt-16 px-2 md:px-8">
- {/* translateX={(document.body.clientWidth > 1200) ? 20 : undefined} */}
+      {/* translateX={(document.body.clientWidth > 1200) ? 20 : undefined} */}
       <Hero video="mymovie1.mp4" translateY={-4} > 
         <div className={`w-full md:w-1/2 lg:w-1/3 m-8 p-4 glass-light rounded-lg text-center`}>
           <h1 className="mb-5 text-5xl font-bold gold-text">IAMZAE</h1>
@@ -140,17 +66,7 @@ const Home: React.FC<any> = (props: any) => {
 
       <Hero translateY={-8}>
         <div className="w-full md:w-11/12 bg-white bg-opacity-75 rounded-lg">
-          <Carousel categoryName="Events">
-            {
-              Array.from(Array(12)).map((n, i) => (
-                // <ProductCard key={i.toString()} queryID={''}/>
-                <Calendar key={i.toString()} month={i} year={(new Date()).getFullYear()} 
-                  highlights={ calendarDays[months[i]].map(cd => cd.day) }
-                  onDayClick={(d,m,y) => navigate(`/events/?search=${m+1}/${d}/${y}`)}
-                />
-              ))
-            }
-          </Carousel >
+          <EventsCalendar year={(new Date()).getFullYear()} events={events}/>
           <ul>
             {
               events.map((event, index) => (

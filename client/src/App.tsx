@@ -15,10 +15,12 @@ import About from './pages/about';
 import NoPage from './pages/nopage';
 import Admin from './pages/admin';
 import Events from './pages/events';
-
-import config from './config/config';
 import GalleryPage from './pages/gallery-page';
 import Listen from './pages/listen';
+import News from './pages/news';
+
+import config from './config/config';
+
 
 function App() {
 
@@ -36,14 +38,15 @@ function App() {
               links={[
                 { title: 'home', href: '/home' },
                 { title: 'events', href: '/events' },
-                { title: 'listen', href: '/listen' }
+                { title: 'news', href: '/news' }
               ]}
               menus={[
                 {
                   title: 'about', submenu: [
-                    { title: 'about me', href: '/about' },
                     { title: 'gallery', href: '/gallery' },
+                    { title: 'listen', href: '/listen' },
                     { title: 'contact', href: '/contact' },
+                    { title: 'about me', href: '/about' },
                   ] 
                 },
                 {
@@ -62,6 +65,7 @@ function App() {
               <Route path="contact" element={<Contact />} />
               <Route path="events" element={<Events />} />
               <Route path="events/:id" element={<Events />} />
+              <Route path="news" element={<News />}/>
               <Route path="listen" element={<Listen />} />
               <Route path="item" element={<Item />} />
               <Route path="login" element={<Login />} />
@@ -75,9 +79,10 @@ function App() {
             <Footer 
               links={[
                 { title: 'home', href: '/home' },
+                { title: 'events', href: '/events' },
+                { title: 'news', href: '/news' },
+                { title: 'contact', href: '/contact' },
                 { title: 'about', href: '/about' },
-                { title: 'gallery', href: '/gallery' },
-                { title: 'contact', href: '/contact' }
               ]}
               socials={[
                 { 

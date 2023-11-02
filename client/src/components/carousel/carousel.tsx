@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
 
 export type CarouselProps = {
   categoryName?: string,
   disableBrowseAll?: boolean,
+  initScrollToItem?: number,
   onScrollLeftEnd?: () => any,
   onScrollRightEnd?: () => any,
+  onScroll?: (item: number) => any,
   children: React.ReactNode[]
 }
 
@@ -37,6 +39,11 @@ const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
   const isOverflow = useIsOverflow(ref);
 
   //const [scroll, setScroll] = React.useState<number>(0);
+  useEffect(() => {
+    if (props.initScrollToItem) {
+      ref.current!.scrollLeft += props.initScrollToItem*(ref.current!.scrollWidth/props.children.length);
+    }
+  }, [])
 
   return (
     <div className="relative m-2">
