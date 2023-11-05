@@ -7,12 +7,19 @@ import ReviewComponent from "../components/review/review";
 import EventsCalendar from "../components/events-calendar/events-calendar";
 
 import HttpService from "../services/http.service";
+import EventService from "../services/event.service";
 
 import { EventPerformance, Review } from "../models/models";
+
+import { timeData } from "../models/models";
+
+const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
 
 const Home: React.FC<any> = (props: any) => {
 
   const [events, setEvents] = React.useState<EventPerformance[]>([]);
+  const [derivedEvents, setDerivedEvents] = React.useState<EventPerformance[]>([]);
+  const [eventsCalendarMonth, setEventsCalendarMonth] = React.useState<typeof months[number]>(months[(new Date()).getMonth()])
   const [reviews, setReviews] = React.useState<Review[]>([]);
 
   const [busy, setBusy] = React.useState<boolean>(true);
@@ -37,6 +44,12 @@ const Home: React.FC<any> = (props: any) => {
       return newEvs;
     });
   }
+
+  React.useEffect(() => {
+    (async () => {
+      setDerivedEvents((await EventService.generateDerivedEvents(events)).body!)
+    })();
+  }, [events]);
 
   React.useEffect(() => {
     (async () => {
@@ -66,10 +79,11 @@ const Home: React.FC<any> = (props: any) => {
 
       <Hero translateY={-8}>
         <div className="w-full md:w-11/12 bg-white bg-opacity-75 rounded-lg">
-          <EventsCalendar year={(new Date()).getFullYear()} events={events}/>
-          <ul>
+          <EventsCalendar year={(new Date()).getFullYear()} events={events} onscroll={(month) => setEventsCalendarMonth(month)}/>
+          <h1 className=" text-lg font-extrabold m-4 ml-8">{eventsCalendarMonth} events</h1>
+          <ul className="max-h-[36rem] overflow-y-scroll">
             {
-              events.map((event, index) => (
+              derivedEvents.filter(e => e.month === eventsCalendarMonth).map((event, index) => (
                 <div 
                   className="cursor-pointer hover:p-1 hover:bg-white"
                   onClick={() => navigate(`/events/${event.id}`)}

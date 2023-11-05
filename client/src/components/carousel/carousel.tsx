@@ -76,7 +76,9 @@ const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
           // href={'#'+props.categoryName.replaceAll(' ', '')+((scroll + props.children.length-1) % props.children.length)}
           // onClick={() => setScroll(s => (s + props.children.length-1) % props.children.length)}
           onClick={()=>{ 
+            props.onScroll && props.onScroll(Math.round(props.children.length*ref.current!.scrollLeft/ref.current!.scrollWidth));
             ref.current!.scrollLeft -= (1.0/props.children.length)*ref.current!.scrollWidth;
+
             if (ref.current!.scrollLeft <= 0) {
               props.onScrollLeftEnd && props.onScrollLeftEnd();
             }
@@ -91,7 +93,8 @@ const Carousel: React.FC<CarouselProps> = (props: CarouselProps) => {
           <a 
             className="absolute z-10 btn btn-circle text-4xl right-5 top-1/2 p-8 glass cursor-pointer"
             // href={'#'+props.categoryName.replaceAll(' ', '')+((scroll + 1) % props.children.length)}
-            onClick={()=>{ 
+            onClick={()=>{
+              props.onScroll && props.onScroll(Math.round(props.children.length*ref.current!.scrollLeft/ref.current!.scrollWidth) + 2);
               ref.current!.scrollLeft += (1.0/props.children.length)*ref.current!.scrollWidth;
               if (ref.current!.scrollLeft >= (ref.current!.scrollWidth - ref.current!.clientWidth)) {
                 props.onScrollRightEnd && props.onScrollRightEnd();

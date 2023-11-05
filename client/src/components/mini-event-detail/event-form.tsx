@@ -3,6 +3,7 @@ import React from "react";
 import { EventPerformance, timeData } from '../../models/models';
 
 import ValidationService, { Schema } from "../../services/validation.service";
+import EventService from "../../services/event.service";
 import config from "../../config/config";
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;

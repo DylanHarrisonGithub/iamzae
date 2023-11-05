@@ -4,20 +4,13 @@ import { useNavigate } from "react-router-dom";
 import Calendar from '../calendar/calendar';
 import Carousel from '../carousel/carousel';
 
+import EventService from '../../services/event.service';
+
 import { EventPerformance, timeData } from '../../models/models';
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
 
-function getNthDayInMonth(nth: number, day: typeof weekdays[number], month: typeof months[number], year: number) {
-  // Create new date for 1st of month
-  let d = new Date(year, months.indexOf(month));
-  // Move to first instance of day in month and 
-  // add (n - 1) weeks
-  d.setDate(1 + (7 - d.getDay() + weekdays.indexOf(day))%7 + (nth - 1)*7);
-  return d;
-};
-
-const EventsCalendar: React.FC<{year: number, events: EventPerformance[], display?: "CAROUSEL" | "GALLERY"}> = ({year, events, display}) => {
+const EventsCalendar: React.FC<{year: number, events: EventPerformance[], onscroll?: (month: typeof months[number]) => any, display?: "CAROUSEL" | "GALLERY"}> = ({year, events, onscroll, display}) => {
 
   const navigate = useNavigate();
 
@@ -37,44 +30,10 @@ const EventsCalendar: React.FC<{year: number, events: EventPerformance[], displa
   });
 
   React.useEffect(() => {
-    setCalendarDays(cd => {
-      const tempNewEvents: EventPerformance[] = [...events];
-      tempNewEvents.forEach(e => cd[e.month].push({ day: parseInt(e.day.toString()), eventID: e.id }));
-      tempNewEvents.filter(e => e.period === 'Daily').forEach(e => {
-        let d = new Date(e.year, months.indexOf(e.month), e.day);
-        while (d.getFullYear() === 2023) {
-          cd[months[d.getMonth()]].push({ day: parseInt(d.getDate().toString()), eventID: e.id });
-          d.setDate(d.getDate() + 1);
-        }
-      });
-      tempNewEvents.filter(e => e.period === 'Weekly').forEach(e => {
-        let d = new Date(e.year, months.indexOf(e.month), e.day);
-        while (d.getFullYear() === 2023) {
-          cd[months[d.getMonth()]].push({ day: parseInt(d.getDate().toString()), eventID: e.id });
-          d.setDate(d.getDate() + 7);
-        }
-      });
-      tempNewEvents.filter(e => e.period === 'BiWeekly').forEach(e => {
-        let d = new Date(e.year, months.indexOf(e.month), e.day);
-        while (d.getFullYear() === 2023) {
-          cd[months[d.getMonth()]].push({ day: parseInt(d.getDate().toString()), eventID: e.id });
-          d.setDate(d.getDate() + 14);
-        }
-      });
-      tempNewEvents.filter(e => e.period === 'Monthly').forEach(e => {
-        let d = new Date(e.year, months.indexOf(e.month));
-        const dayNum = (new Date(e.year, months.indexOf(e.month), e.day)).getDay();
-        const weekday: typeof weekdays[number] = weekdays[dayNum];
-        const dayCount = Math.floor((e.day-1) / 7) + 1;
-        let eDay: Date;
-        while (d.getFullYear() === 2023) {
-          eDay = getNthDayInMonth(dayCount, weekday, months[d.getMonth()], e.year);
-          cd[months[d.getMonth()]].push({ day: eDay.getDate(), eventID: e.id });
-          d = new Date(e.year, d.getMonth() + 1);
-        }
-      });
-      return cd
-    });
+    (async () => {
+      const cds = (await EventService.generateEventCalendar(events)).body!;
+      setCalendarDays(cds);
+    })();
   }, [events]);
 
   return (
@@ -92,7 +51,11 @@ const EventsCalendar: React.FC<{year: number, events: EventPerformance[], displa
         }
       </div>
     :
-      <Carousel categoryName="Events" initScrollToItem={(year === (new Date()).getFullYear()) ? (new Date()).getMonth() : undefined}>
+      <Carousel 
+        categoryName="Events" 
+        initScrollToItem={(year === (new Date()).getFullYear()) ? (new Date()).getMonth() : undefined} 
+        onScroll={(item) => onscroll && onscroll(months[item]) }
+      >
         {
           Array.from(Array(12)).map((n, i) => (
             <Calendar key={i.toString()} month={i} year={year} 
