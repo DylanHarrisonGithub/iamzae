@@ -1,3 +1,5 @@
+import { Schema } from "../services/validation.service";
+
 export const timeData = {
   periods: [ 'Once', 'Daily', 'Weekly', 'BiWeekly', 'Monthly' ] as const,
   weekdays: [
@@ -52,6 +54,19 @@ export type EventPerformance = {
   website: string,
   media: string[]
 }
+
+export const EventPerformanceSchema: Schema = {
+  day: { type: 'number', attributes: { required: true, range: { min: 1, max: 31 } } },
+  month: { type: [...months], attributes: { required: true } },
+  year: { type: 'number', attributes: { required: true, range: { min: 2020, max: 2120 } } },
+  time: { type: [...times], attributes: { required: true }},
+  location: { type: 'string', attributes: { required: true } },
+  thumbnail: { type: 'string', attributes: { required: false } },
+  description: { type: 'string', attributes: { required: true, strLength: { minLength: 5 } }},
+  website: { type: 'string', attributes: { required: false }},
+  period: { type: [...periods], attributes: { required: true } },
+  media: { type: 'string', attributes: { required: false, array: { minLength: 0 }}}
+};
 
 export type Review = {
   id: number,

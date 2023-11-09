@@ -170,9 +170,55 @@ const EventService = ((): typeof service extends Service ? typeof service : neve
           }`.toUpperCase().includes(mappedSearch)
         )
       }));
+    },
+
+
+    urlEncodeEvent: async (e: EventPerformance): ServicePromise<string> => {
+      return new Promise(resolve => resolve({
+        success: true,
+        messages: [`CLIENT->SERVICES->EVENT->URLENCODEEVENT: Event encoded.`],
+        body: btoa(JSON.stringify(e))
+      }));
+    },
+    urlDecodeEvent: async (encodedEvent: string): ServicePromise<EventPerformance> => {
+      try {
+        const decodedEvent = JSON.parse(atob(encodedEvent)) as EventPerformance;
+        const valid = [
+          'id',
+          'day',
+          'month',
+          'year',
+          'time',
+          'timestamp',
+          'period',
+          'location',
+          'thumbnail',
+          'description',
+          'website',
+          'media'
+        ].reduce((a, key) => a && Object.keys(decodedEvent).includes(key), true);
+
+        if (!valid) {
+          return new Promise(resolve => resolve({
+            success: false,
+            messages: [`CLIENT->SERVICES->EVENT->URLENCODEEVENT: Event could not be decoded.`]
+          }));
+        } 
+        return new Promise(resolve => resolve({
+          success: true,
+          messages: [`CLIENT->SERVICES->EVENT->URLENCODEEVENT: Event decoded.`],
+          body: decodedEvent
+        }));
+      } catch (err) {
+        return new Promise(resolve => resolve({
+          success: false,
+          messages: [`CLIENT->SERVICES->EVENT->URLENCODEEVENT: Event could not be decoded.`]
+        }));
+      }
     }
   
   }
+
 
   return service;
 })();

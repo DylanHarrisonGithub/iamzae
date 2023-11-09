@@ -71,7 +71,7 @@ export default async (request: ParsedRequest<{
         messages: [  
           `SERVER - ROUTES - EVENTSTREAM - Events streamed.`
         ].concat(dbRes.messages),
-        body: events
+        body: events.map(e => { const { search, ...filteredE } = e; return filteredE })
       }
     }));
   } else {

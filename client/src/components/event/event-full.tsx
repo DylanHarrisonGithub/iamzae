@@ -11,6 +11,7 @@ import MediaViewer from '../media-viewer/media-viewer';
 import { ModalContext } from '../modal/modal';
 import ReviewComponent from '../review/review';
 import ReviewForm from '../review/review-form';
+import MiniMediaViewer from '../media-viewer/mini-media-viewer';
 
 const acceptedMedia = [
   'gif', 'jpg', 'jpeg', 'png',
@@ -55,64 +56,22 @@ const EventFull: React.FC<EventListItemProps> = ({ event }) => {
             <Gallery>
               {
                 event.media.map(a => (
-                  <span key={a} className="relative">
-                    {
-                      acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
-                        <img 
-                          className="inline-block cursor-pointer" 
-                          width={64} 
-                          height={64} 
-                          src={
-                            (
-                              a.toUpperCase().startsWith('HTTP://') ||
-                              a.toUpperCase().startsWith('HTTPS://') ||
-                              a.toUpperCase().startsWith('www.')
-                            ) ?
-                              a
-                            :
-                              config.ASSETS[config.ENVIRONMENT] + `media/${a}`
-                          }
-                          onClick={() => {
-                            (new Promise<any>((res, rej) => {
-                              modalContext.modal!({
-                                node: (<MediaViewer filename={a}/>), 
-                                resolve: res, 
-                                reject: rej
-                              });
-                            })).then(result => {
-                              modalContext.modal!();
-                            }).catch(err => {});
-                          }}
-                        >
-                        </img>
-                      :
-                        <video
-                          className='cursor-pointer'
-                          width={64} height={64}
-                          src={
-                            (
-                              a.toUpperCase().startsWith('HTTP://') ||
-                              a.toUpperCase().startsWith('HTTPS://') ||
-                              a.toUpperCase().startsWith('www.')
-                            ) ?
-                              a
-                            :
-                              config.ASSETS[config.ENVIRONMENT] + `media/${a}`
-                          }
-                          autoPlay={false} muted={true} loop={true}
-                          onClick={() => {
-                            (new Promise<any>((res, rej) => {
-                              modalContext.modal!({
-                                node: (<MediaViewer filename={a}/>), 
-                                resolve: res, 
-                                reject: rej
-                              });
-                            })).then(result => {
-                              modalContext.modal!();
-                            }).catch(err => {});
-                          }}
-                        ></video>
-                    }
+                  <span 
+                    key={a} 
+                    className="relative inline-block cursor-pointer"
+                    onClick={() => {
+                      (new Promise<any>((res, rej) => {
+                        modalContext.modal!({
+                          node: (<MediaViewer filename={a}/>), 
+                          resolve: res, 
+                          reject: rej
+                        });
+                      })).then(result => {
+                        modalContext.modal!();
+                      }).catch(err => {});
+                    }}
+                  >
+                    <MiniMediaViewer filename={a}/>
                   </span>
                 ))
               }

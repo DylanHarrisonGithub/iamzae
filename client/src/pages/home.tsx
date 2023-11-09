@@ -27,7 +27,7 @@ const Home: React.FC<any> = (props: any) => {
   const [busy2, setBusy2] = React.useState<boolean>(true);
 
   React.useEffect(() => {
-    (async () => setDerivedEvents((await EventService.generateDerivedEvents(storageContext.events as EventPerformance[])).body!) )();
+    (async () => setDerivedEvents((await EventService.generateDerivedEvents((storageContext.events as EventPerformance[]) || [])).body!) )();
   }, [storageContext.events]);
 
   React.useEffect(() => {
@@ -57,16 +57,18 @@ const Home: React.FC<any> = (props: any) => {
         <div className="w-full bg-white bg-opacity-75 rounded-lg text-center">
         <div className="text-lg font-extrabold mt-7 ml-8 text-left">{months[(new Date()).getMonth()]} events <div className="float-right inline-block mr-8 text-blue-600 dark:text-blue-500 hover:underline"><Link to={`/events`}>Browse All</Link></div></div>
           <div className="inline-block align-top ">
-            <EventsCalendar year={(new Date()).getFullYear()} events={storageContext.events as EventPerformance[]} displayMonths={[months[(new Date()).getMonth()]]}/>
+            <EventsCalendar year={(new Date()).getFullYear()} events={storageContext.events as EventPerformance[] || []} displayMonths={[months[(new Date()).getMonth()]]}/>
           </div>
           <div className="inline-block mt-8 align-top p-2">
 
             <ul className="max-h-[36rem] overflow-y-scroll">
               {
                 derivedEvents.filter(e => e.month === months[(new Date()).getMonth()]).map((event, index) => (
-                  <div 
+                  <div
+                    key={index} 
                     className="cursor-pointer hover:p-1 hover:bg-white"
-                    onClick={() => navigate(`/events/${event.id}`)}
+                    //onClick={() => navigate(`/events/${event.id}`)}
+                    onClick={() => navigate(`/events/${btoa(JSON.stringify(event))}`)}
                   >
                     <MiniEventDetail key={index} event={event} />
                   </div>

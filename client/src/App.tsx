@@ -95,7 +95,7 @@ function App() {
               </Route>
               <Route path="contact" element={<Contact />} />
               <Route path="events" element={<Events />} />
-              <Route path="events/:id" element={<Events />} />
+              <Route path="events/:encodedEvent" element={<Events />} />
               <Route path="news" element={<News />}/>
               <Route path="listen" element={<Listen />} />
               <Route path="item" element={<Item />} />
