@@ -27,7 +27,7 @@ type EventListItemProps = {
 
 const MiniEventDetail: React.FC<EventListItemProps> = ({ event }) => {
   return (
-    <li className="flex p-4 border border-gray-300 rounded shadow-md">
+    <li className="flex p-4 border border-gray-300 rounded shadow-md text-left">
       <div className="flex-shrink-0 w-20 h-20 mr-4">
         <img src={
           (

@@ -34,7 +34,7 @@ const Storage: React.FC<StorageProps> = ({ children, keys }) => {
 
   }, []);
 
-  return (<StorageContext.Provider value={storageObj}>{children}</StorageContext.Provider>)
+  return (<StorageContext.Provider value={storageObj}>{children}</StorageContext.Provider>);
 };
 
 export default Storage;

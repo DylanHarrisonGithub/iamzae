@@ -4,6 +4,11 @@ import { EventPerformance, timeData } from '../models/models';
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
 
+const toRegularTime = (militaryTime: string) => {
+  const [hours, minutes] = militaryTime.split(':').map(t => parseInt(t));
+  return `${(hours > 12) ? (hours - 12).toString().padStart(2,'0') : hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}${(hours >= 12) ? 'PM' : 'AM'}`;
+};
+
 function getNthDayInMonth(nth: number, day: typeof weekdays[number], month: typeof months[number], year: number) {
   // Create new date for 1st of month
   let d = new Date(year, months.indexOf(month));
@@ -109,6 +114,61 @@ const EventService = ((): typeof service extends Service ? typeof service : neve
               { ...events.find(e => e.id === evobj.eventID)!, day: evobj.day, month: month as typeof months[number] }
             ], [] as EventPerformance[])
         ], [] as EventPerformance[]).sort((a,b) => + ((new Date(a.year, months.indexOf(a.month), a.day)) > (new Date(b.year, months.indexOf(b.month), b.day))))
+      }));
+    },
+
+    getFilteredEvents: async (events: EventPerformance[], search: string): ServicePromise<EventPerformance[]> => {
+
+      // attempt format date and date-like searches to standard [monthname]/[dd]/[yyyy] or [monthname]/[yyyy]
+      let mappedSearch = search; 
+      if (mappedSearch) {
+        mappedSearch = mappedSearch.trim().replace(/\s+/g, '/').replace(/-/g, '/');
+        const searchSplit = mappedSearch.split('/');
+        if (searchSplit.length === 3) {
+          let timestamp = Date.parse(mappedSearch);
+          if (!isNaN(timestamp)) {
+            let d = new Date(timestamp);
+            mappedSearch = `${months[d.getMonth()]}/${d.getDate()}/${d.getFullYear()}`
+          } else {
+            mappedSearch = search; // give up
+          }
+        } else if (searchSplit.length === 2 && searchSplit[0].length) {
+          if (isNaN(searchSplit[0] as any)) {
+            searchSplit[0] = searchSplit[0].charAt(0).toUpperCase() + searchSplit[0].slice(1).toLowerCase();
+            if (months.includes(searchSplit[0] as any)) {
+              mappedSearch = mappedSearch = `${searchSplit[0]}/${searchSplit[1].padStart(4, '20')}`;
+            } else {
+              mappedSearch = search;
+            }
+          } else {
+            let m = parseInt(searchSplit[0]);
+            if (m >= 1 && m <= 12) {
+              mappedSearch = mappedSearch = `${months[m-1]}/${searchSplit[1].padStart(4, '20')}`;
+            } else {
+              mappedSearch = search;
+            }
+          }
+        } else {
+          mappedSearch = search; // give up october  2023
+        }
+      }
+      
+      mappedSearch = mappedSearch.toUpperCase();
+
+      return new Promise(resolve => resolve({
+        success: true,
+        messages: [`CLIENT->SERVICES->EVENT->GENERATEDERIVEDEVENTS: Derived Events generated.`],
+        body: events.filter(event => `${
+            event.month}/${event.day}/${event.year}${
+            event.month}/${event.year}${
+            event.time}${
+            toRegularTime(event.time)}${
+            event.location}${
+            event.description}${
+            event.period}${
+            event.website
+          }`.toUpperCase().includes(mappedSearch)
+        )
       }));
     }
   

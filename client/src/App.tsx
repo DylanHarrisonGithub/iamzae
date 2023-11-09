@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Footer from './components/footer/footer';
 import Navbar from './components/navbar/navbar';
 import Modal from './components/modal/modal';
-import Storage from './components/storage/storage-context';
 
 import Home from './pages/home';
 import Contact from './pages/contact';
@@ -19,8 +18,38 @@ import GalleryPage from './pages/gallery-page';
 import Listen from './pages/listen';
 import News from './pages/news';
 
+import Storage from './components/storage/storage-context';
+
+import HttpService from './services/http.service';
+import EventService from './services/event.service';
+import StorageService from './services/storage.service';
+
+import { EventPerformance } from './models/models';
+
 import config from './config/config';
 
+const streamEvents = async (afterID: number) => {
+  
+  !afterID && await StorageService[config.AUTH_TOKEN_STORAGE_METHOD].store('events', []);
+  await StorageService[config.AUTH_TOKEN_STORAGE_METHOD].store('eventsBusy', true);
+  const res = await HttpService.get<EventPerformance[]>('eventstream', { afterID: afterID, numrows: 10 });
+  if (!(res && res.success && res.body && res.body.length)) {
+    await StorageService[config.AUTH_TOKEN_STORAGE_METHOD].store('eventsBusy', false);
+    console.log(res);
+    return;
+  }
+  
+  let storageEvents: EventPerformance[] = (await StorageService[config.AUTH_TOKEN_STORAGE_METHOD].retrieve('events')).body || [];
+  storageEvents = [ ...storageEvents, ...res.body!.filter(e => !storageEvents.some(se => se.id === e.id)) ].sort((a, b) => a.id - b.id);
+  await StorageService[config.AUTH_TOKEN_STORAGE_METHOD].store('events', storageEvents);
+
+  if (res.body?.length === 10) { 
+    streamEvents(storageEvents.at(-1)!.id); 
+  } else {
+    await StorageService[config.AUTH_TOKEN_STORAGE_METHOD].store('eventsBusy', false);
+  }
+
+};
 
 function App() {
 
@@ -28,9 +57,11 @@ function App() {
   // console.log(process.env.PUBLIC_URL);
   // console.log(process.env.TZ);
 
+  React.useEffect(() => {streamEvents(0)}, []);
+
   return (
     <div className=" mx-auto">
-      <Storage keys={['token', 'user']}>
+      <Storage keys={['token', 'user', 'events', 'eventsBusy']}>
         <Modal>
           <BrowserRouter>
             <Navbar

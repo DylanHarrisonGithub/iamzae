@@ -1,13 +1,15 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Hero from "../components/hero/hero";
-import MiniEventDetail from "../components/mini-event-detail/mini-event-detail";
+import MiniEventDetail from "../components/event/mini-event-detail";
 import ReviewComponent from "../components/review/review";
 import EventsCalendar from "../components/events-calendar/events-calendar";
 
 import HttpService from "../services/http.service";
 import EventService from "../services/event.service";
+
+import { StorageContext } from "../components/storage/storage-context";
 
 import { EventPerformance, Review } from "../models/models";
 
@@ -17,45 +19,19 @@ const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeDat
 
 const Home: React.FC<any> = (props: any) => {
 
-  const [events, setEvents] = React.useState<EventPerformance[]>([]);
-  const [derivedEvents, setDerivedEvents] = React.useState<EventPerformance[]>([]);
-  const [eventsCalendarMonth, setEventsCalendarMonth] = React.useState<typeof months[number]>(months[(new Date()).getMonth()])
-  const [reviews, setReviews] = React.useState<Review[]>([]);
-
-  const [busy, setBusy] = React.useState<boolean>(true);
-  const [busy2, setBusy2] = React.useState<boolean>(true);
-
+  const storageContext = React.useContext(StorageContext);
   const navigate = useNavigate();
 
-  const streamEvents = async (afterID?: number) => {
-    const res = await HttpService.get<EventPerformance[]>('eventstream', { afterID: afterID || 0, numrows: 10, search: (new Date()).getFullYear() });
-    if (!(res && res.success && res.body && res.body.length)) {
-      setBusy(false);
-      console.log(res);
-      return;
-    } 
-    setEvents(evs => {
-      const newEvs = [...evs, ...res.body!.filter(e => !evs.some(oe => oe.id === e.id))];
-      if (res.body!.length === 10) {
-        streamEvents(newEvs.at(-1)!.id);
-      } else {
-        setBusy(false);
-      }
-      return newEvs;
-    });
-  }
+  const [derivedEvents, setDerivedEvents] = React.useState<EventPerformance[]>([]);
+  const [reviews, setReviews] = React.useState<Review[]>([]);
+  const [busy2, setBusy2] = React.useState<boolean>(true);
+
+  React.useEffect(() => {
+    (async () => setDerivedEvents((await EventService.generateDerivedEvents(storageContext.events as EventPerformance[])).body!) )();
+  }, [storageContext.events]);
 
   React.useEffect(() => {
     (async () => {
-      setDerivedEvents((await EventService.generateDerivedEvents(events)).body!)
-    })();
-  }, [events]);
-
-  React.useEffect(() => {
-    (async () => {
-      setBusy(true);
-      streamEvents();
-
       setBusy2(true);
       const res2 = await HttpService.get<Review[]>('approvedreviewstream', { afterID: 0, numrows: 5 });
       if (res2.success && res2.body) {
@@ -78,26 +54,33 @@ const Home: React.FC<any> = (props: any) => {
       </Hero>
 
       <Hero translateY={-8}>
-        <div className="w-full md:w-11/12 bg-white bg-opacity-75 rounded-lg">
-          <EventsCalendar year={(new Date()).getFullYear()} events={events} onscroll={(month) => setEventsCalendarMonth(month)}/>
-          <h1 className=" text-lg font-extrabold m-4 ml-8">{eventsCalendarMonth} events</h1>
-          <ul className="max-h-[36rem] overflow-y-scroll">
-            {
-              derivedEvents.filter(e => e.month === eventsCalendarMonth).map((event, index) => (
-                <div 
-                  className="cursor-pointer hover:p-1 hover:bg-white"
-                  onClick={() => navigate(`/events/${event.id}`)}
-                >
-                  <MiniEventDetail key={index} event={event} />
-                </div>
-              ))
-            }
-            { busy &&
-              <li className="flex justify-center my-40">
-                <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-              </li>
-            }
-          </ul>
+        <div className="w-full bg-white bg-opacity-75 rounded-lg text-center">
+        <div className="text-lg font-extrabold mt-7 ml-8 text-left">{months[(new Date()).getMonth()]} events <div className="float-right inline-block mr-8 text-blue-600 dark:text-blue-500 hover:underline"><Link to={`/events`}>Browse All</Link></div></div>
+          <div className="inline-block align-top ">
+            <EventsCalendar year={(new Date()).getFullYear()} events={storageContext.events as EventPerformance[]} displayMonths={[months[(new Date()).getMonth()]]}/>
+          </div>
+          <div className="inline-block mt-8 align-top p-2">
+
+            <ul className="max-h-[36rem] overflow-y-scroll">
+              {
+                derivedEvents.filter(e => e.month === months[(new Date()).getMonth()]).map((event, index) => (
+                  <div 
+                    className="cursor-pointer hover:p-1 hover:bg-white"
+                    onClick={() => navigate(`/events/${event.id}`)}
+                  >
+                    <MiniEventDetail key={index} event={event} />
+                  </div>
+                ))
+              }
+              { storageContext.eventsBusy &&
+                <li className="flex justify-center my-40">
+                  <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </li>
+              }
+            </ul>
+
+          </div>
+          
         </div>
       </Hero>
 
@@ -133,7 +116,7 @@ Sample pads and drum machines add dynamic layers, while synthesizers contribute 
       </Hero>
       <Hero svg="diamonds">
         <div 
-          className={`w-full md:w-1/2 lg:w-1/3 m-8 p-4 glass-light rounded-lg text-center ${
+          className={`w-full md:w-1/2 m-8 p-4 glass-light rounded-lg text-center ${
             props.translateX && (
               (props.translateX > 0) ?
                 `translate-x-${props.translateX}`

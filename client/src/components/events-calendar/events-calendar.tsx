@@ -10,7 +10,15 @@ import { EventPerformance, timeData } from '../../models/models';
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
 
-const EventsCalendar: React.FC<{year: number, events: EventPerformance[], onscroll?: (month: typeof months[number]) => any, display?: "CAROUSEL" | "GALLERY"}> = ({year, events, onscroll, display}) => {
+type EventsCalendarProps = {
+  year: number, 
+  events: EventPerformance[], 
+  onscroll?: (month: typeof months[number]) => any, 
+  display?: "CAROUSEL" | "GALLERY"
+  displayMonths?: (typeof months[number])[]
+}
+
+const EventsCalendar: React.FC<EventsCalendarProps> = ({year, events, onscroll, display, displayMonths}) => {
 
   const navigate = useNavigate();
 
@@ -52,14 +60,14 @@ const EventsCalendar: React.FC<{year: number, events: EventPerformance[], onscro
       </div>
     :
       <Carousel 
-        categoryName="Events" 
-        initScrollToItem={(year === (new Date()).getFullYear()) ? (new Date()).getMonth() : undefined} 
+        disableBrowseAll={true}
+        initScrollToItem={(year === (new Date()).getFullYear() && displayMonths?.includes(months[(new Date()).getMonth()])) ? (new Date()).getMonth() : undefined} 
         onScroll={(item) => onscroll && onscroll(months[item]) }
       >
         {
-          Array.from(Array(12)).map((n, i) => (
-            <Calendar key={i.toString()} month={i} year={year} 
-              highlights={ calendarDays[months[i]].map(cd => cd.day) }
+          months.filter(mName => displayMonths ? (displayMonths.includes(mName)) : true).map((mName, i) => (
+            <Calendar key={i.toString()} month={months.indexOf(mName)} year={year} 
+              highlights={ calendarDays[mName].map(cd => cd.day) }
               onDayClick={(d,m,y) => navigate(`/events/?search=${m+1}/${d}/${y}`)}
             />
           ))

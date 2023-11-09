@@ -1,147 +1,91 @@
 import React from "react";
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 
-import Calendar from "../components/calendar/calendar";
+import EventsCalendar from "../components/events-calendar/events-calendar";
 import Carousel from "../components/carousel/carousel";
 import Gallery from "../components/gallery/gallery";
-
-import HttpService from "../services/http.service";
-import { EventPerformance, Review } from "../models/models";
-import MiniEventDetail from "../components/mini-event-detail/mini-event-detail";
-import config from "../config/config";
-
-import { ModalContext } from "../components/modal/modal";
+import MiniEventDetail from "../components/event/mini-event-detail";
 import MediaViewer from "../components/media-viewer/media-viewer";
 import ReviewForm from "../components/review/review-form";
 import Hero from "../components/hero/hero";
-import VerticalEventDetail from "../components/mini-event-detail/vertical-event-detail";
+import VerticalEventDetail from "../components/event/vertical-event-detail";
 import ReviewComponent from "../components/review/review";
+
+import EventService from "../services/event.service";
+
+import { ModalContext } from "../components/modal/modal";
+import { StorageContext } from "../components/storage/storage-context";
+
+import { EventPerformance, Review, timeData } from "../models/models";
+
+import config from "../config/config";
+import MiniMediaViewer from "../components/media-viewer/mini-media-viewer";
+
+const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
 
 const acceptedMedia = [
   'gif', 'jpg', 'jpeg', 'png',
   'mov', 'mp4', 'mpeg', 'webm', 'ogg'
 ];
 
-const Events: React.FC<any> = (props: any) => {
+const Events: React.FC<any> = () => {
 
   const modalContext = React.useContext(ModalContext);
+  const storageContext = React.useContext(StorageContext);
 
-  const [busy, setBusy] = React.useState<boolean>(false);
-  const [search, setSearch] = React.useState<string>('');
-  const [events, setEvents] = React.useState<EventPerformance[]>([]);
+  const [derivedEvents, setDerivedEvents] = React.useState<EventPerformance[]>([]);
   const [eventReviews, setEventReviews] = React.useState<Review[]>([]);
+  const [eventsCalendarMonth, setEventsCalendarMonth] = React.useState<typeof months[number]>(months[(new Date()).getMonth()]);
 
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
 
-  const init = React.useRef<boolean>(true);
-
   React.useEffect(() => {
-    setEvents([]);
-    setBusy(true);
-    if (id) {
-      HttpService.get<EventPerformance[]>('eventstream', { afterID: 0, numrows: 10, id: id }).then(res => {
-        if (res.success && res.body) {
-          setEvents(res.body);
-          HttpService.get<Review[]>('approvedreviewstream', { afterID: 0, numrows: 10, event: id }).then(rev => {
-            if (rev.success && rev.body) {
-              setEventReviews(rev.body);
-            }
-          });
-        }
-        setBusy(false);
-        init.current=false;
-      });
-    } else if (searchParams.get('search')) {
-      HttpService.get<EventPerformance[]>('eventstream', { afterID: 0, numrows: 10, search: searchParams.get('search') }).then(res => {
-        if (res.success && res.body) {
-          setEvents(res.body);
-          if (res.body.length === 1) {
-            HttpService.get<Review[]>('approvedreviewstream', { afterID: 0, numrows: 10, event: res.body[0].id }).then(rev => {
-              if (rev.success && rev.body) {
-                setEventReviews(rev.body);
-              }
-            });
-          }
-        }
-        res.messages.forEach(m => modalContext.toast!('info', m));
-        setBusy(false);
-        init.current=false;
-      });
-    } else {
-      HttpService.get<EventPerformance[]>('eventstream', { afterID: 0, numrows: 10 }).then(res => {
-        if (res.success && res.body) {
-          setEvents(res.body);
-        }
-        setBusy(false);
-        init.current=false;
-      });
-    }
-  }, [searchParams, id])
-
-  React.useEffect(() => {
-    if (!init.current) {
-      if (search.length) {
-        navigate('/events/?search='+search);
-      } else {
-        navigate('/events');
-      }
-    }
-  }, [search]);
+    (async () => setDerivedEvents(
+      (await EventService.getFilteredEvents((await EventService.generateDerivedEvents(storageContext.events as EventPerformance[])).body!, searchParams.get('search') || '')).body!
+    ) )();
+  }, [storageContext.events, searchParams]);
 
   return (
     <Hero svg="fan">
       <div className="pt-16 container">
         <div className="py-8 sm:w-[600px] md:w-[800px] lg:w-[1200px]">
           <div className="lg:flex mx-5">
-            <div className="block lg:inline-block glass rounded-lg my-4">
-              <button className="btn btn-ghost text-xl gold-text text-center align-middle">
+            <div className="block lg:inline-block my-4 pt-4">
+              <span className="text-xl gold-text text-center align-middle">
                 &nbsp;&nbsp;Events Calendar&nbsp;&nbsp;
-              </button>
+              </span>
             </div>
             <input 
               className={`bg-gray-300 text-right appearance-none border-2 border-gray-600 rounded block w-full lg:w-2/3 py-4 my-4 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ml-auto`} 
               type="text"
               placeholder="Search Events"
-              value={search} 
-              onInput={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
+              value={searchParams.get('search') || ''} 
+              onInput={(event: React.ChangeEvent<HTMLInputElement>) => setSearchParams(event.target.value.length ? {search: event.target.value} : {})}
             />
           </div>
-          <h1 className="text-white mx-8">{ 
-            search ? 
-              `Results for ${search}` 
-            : 
-              id ? `` : `All Events`
-          }</h1>
           {
-            busy && 
+            !searchParams.get('search') &&
+              <EventsCalendar year={(new Date()).getFullYear()} events={derivedEvents}/>
+          }
+            <h1 className="text-white mx-8">{ 
+              searchParams.get('search') ? 
+                `Results for ${searchParams.get('search')}` 
+              : 
+                id ? `` : `All Events`
+            }</h1>
+          {
+            storageContext.eventsBusy && 
               <div className="flex justify-center mt-40">
                 <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
               </div>
           }
-          { (events && events.length && events.length > 1) &&
+          { (derivedEvents.length > 1) &&
             <div className="mx-1 md:mx-5">
-              <Carousel disableBrowseAll onScrollRightEnd={()=> {
-                setBusy(true);
-                if (searchParams.get('search')) {
-                  HttpService.get<EventPerformance[]>('eventstream', { afterID: events[events.length-1].id || 0, numrows: 10, search: searchParams.get('search') }).then(res => {
-                    if (res.success && res.body) {
-                      setEvents(ev => [...ev, ...res.body!]);
-                    }
-                    setBusy(false);
-                  });
-                } else {
-                  HttpService.get<EventPerformance[]>('eventstream', { afterID: events[events.length-1].id || 0, numrows: 10 }).then(res => {
-                    if (res.success && res.body) {
-                      setEvents(ev => [...ev, ...res.body!]);
-                    }
-                    setBusy(false);
-                  });
-                }
-              }}>
+              <Carousel disableBrowseAll>
                 {
-                  events.map((e, i) => (
+                  derivedEvents.map((e, i) => (
                     <div key={i} className="cursor-pointer w-96 glass" onClick={() => navigate(`/events/${e.id}`) }>
                       <VerticalEventDetail event={e}/>
                     </div>
@@ -152,10 +96,10 @@ const Events: React.FC<any> = (props: any) => {
           }
 
           {
-            (events && events.length === 1) &&
+            (derivedEvents.length === 1) &&
               <div className="mx-auto my-6 glass">
                 {
-                  events.map((ev, i) => (
+                  derivedEvents.map((ev, i) => (
                     <div key={i} className="border-gray-200 rounded p-1 shadow-2xl">
                       <div className="hidden md:block"><MiniEventDetail key={i} event={ev} /></div>
                       <div className="md:hidden"><VerticalEventDetail key={i} event={ev} /></div>
@@ -165,64 +109,22 @@ const Events: React.FC<any> = (props: any) => {
                           <Gallery>
                             {
                               ev.media.map(a => (
-                                <span key={a} className="relative">
-                                  {
-                                    acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
-                                      <img 
-                                        className="inline-block cursor-pointer" 
-                                        width={64} 
-                                        height={64} 
-                                        src={
-                                          (
-                                            a.toUpperCase().startsWith('HTTP://') ||
-                                            a.toUpperCase().startsWith('HTTPS://') ||
-                                            a.toUpperCase().startsWith('www.')
-                                          ) ?
-                                            a
-                                          :
-                                            config.ASSETS[config.ENVIRONMENT] + `media/${a}`
-                                        }
-                                        onClick={() => {
-                                          (new Promise<any>((res, rej) => {
-                                            modalContext.modal!({
-                                              node: (<MediaViewer filename={a}/>), 
-                                              resolve: res, 
-                                              reject: rej
-                                            });
-                                          })).then(result => {
-                                            modalContext.modal!();
-                                          }).catch(err => {});
-                                        }}
-                                      >
-                                      </img>
-                                    :
-                                      <video
-                                        className='cursor-pointer'
-                                        width={64} height={64}
-                                        src={
-                                          (
-                                            a.toUpperCase().startsWith('HTTP://') ||
-                                            a.toUpperCase().startsWith('HTTPS://') ||
-                                            a.toUpperCase().startsWith('www.')
-                                          ) ?
-                                            a
-                                          :
-                                            config.ASSETS[config.ENVIRONMENT] + `media/${a}`
-                                        }
-                                        autoPlay={false} muted={true} loop={true}
-                                        onClick={() => {
-                                          (new Promise<any>((res, rej) => {
-                                            modalContext.modal!({
-                                              node: (<MediaViewer filename={a}/>), 
-                                              resolve: res, 
-                                              reject: rej
-                                            });
-                                          })).then(result => {
-                                            modalContext.modal!();
-                                          }).catch(err => {});
-                                        }}
-                                      ></video>
-                                  }
+                                <span 
+                                  key={a} 
+                                  className="relative inline-block cursor-pointer"
+                                  onClick={() => {
+                                    (new Promise<any>((res, rej) => {
+                                      modalContext.modal!({
+                                        node: (<MediaViewer filename={a}/>), 
+                                        resolve: res, 
+                                        reject: rej
+                                      });
+                                    })).then(result => {
+                                      modalContext.modal!();
+                                    }).catch(err => {});
+                                  }}
+                                >
+                                  <MiniMediaViewer filename={a}/>
                                 </span>
                               ))
                             }
@@ -264,12 +166,6 @@ const Events: React.FC<any> = (props: any) => {
 
                 </div>
               </div>
-          }
-
-
-          { 
-            id || 
-            searchParams.get('search') 
           }
 
 

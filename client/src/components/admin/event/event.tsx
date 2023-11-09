@@ -3,10 +3,10 @@ import { EventPerformance } from "../../../models/models";
 
 import { ModalContext } from "../../modal/modal";
 import HttpService from "../../../services/http.service";
-import EventForm from "../../mini-event-detail/event-form";
-import MiniEventDetail from "../../mini-event-detail/mini-event-detail";
-import EventMediaForm from "../../mini-event-detail/event-media-form";
-import VerticalEventDetail from "../../mini-event-detail/vertical-event-detail";
+import EventForm from "../../event/event-form";
+import MiniEventDetail from "../../event/mini-event-detail";
+import EventMediaForm from "../../event/event-media-form";
+import VerticalEventDetail from "../../event/vertical-event-detail";
 import EventReviews from "../../review/event-reviews";
 
 type EventComponentProps = {
