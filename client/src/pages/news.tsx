@@ -3,27 +3,19 @@ import React from "react";
 const News: React.FC<any> = (props: any) => {
   return (
     <div className="pt-16">News
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
-            <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="10" />
-                <feColorMatrix
-                    type="matrix"
-                    values="
-                        0 0 0 0   0.2
-                        0 0.5 0 0   0
-                        0.5 0 0 0   0
-                        0 0 0 0.5 0
-                    "
-                />
-                <feBlend mode="normal" in2="effect1_dropShadow" />
-            </filter>
-            <g filter="url(#neon-glow)">
-                <circle className="neon-circle" cx="50" cy="50" r="20" />
-                <circle className="neon-circle" cx="70" cy="50" r="15" />
-                <circle className="neon-circle" cx="90" cy="50" r="10" />
-                <circle className="neon-circle" cx="110" cy="50" r="5" />
-            </g>
-          </svg>
+        <div className="bg-purple-500 text-center p-8">
+          {
+            Array(12).fill(0).map(u => (
+              <div className='inline-block relative glass w-56 h-56 mx-2 my-1 rounded-md shadow-lg hover:shadow-xl cursor-pointer'>
+                <div className=" absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 m-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="4em" viewBox="0 0 448 512" className="block mx-auto"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>          
+
+                  <p className='mt-4'>Media</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
 
     </div>
   )

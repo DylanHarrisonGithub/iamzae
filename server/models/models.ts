@@ -21,6 +21,7 @@ export const timeData = {
 };
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
+
 export type User = {
   id: number,
   username: string, 
@@ -28,6 +29,14 @@ export type User = {
   salt: string,
   privilege: string,
   avatar: string,
+}
+
+export type Update = {
+  id: number,
+  userID: number,
+  timestamp: number,
+  body: string,
+  search: string
 }
 
 export type Contact = {
@@ -75,6 +84,13 @@ const models = {
     privilege: `TEXT`,
     avatar: `TEXT`,
     PRIMARY: 'KEY (username)' 
+  },
+  update: {
+    id: `SERIAL`,
+    userID: `NUMERIC`,
+    timestamp: `NUMERIC`,
+    body: `TEXT`,
+    search: `TEXT`
   },
   contact: {
     id: `SERIAL`,

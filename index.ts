@@ -72,9 +72,9 @@ app.listen(process.env.PORT || 3000, async () => {
   // console.log(await db.table.delete('event'));
   
   // //!!!! uncomment before deploying !!!!
-  // for (const key of Object.keys(server.models)) {
-  //   console.log((await db.table.create(key, (<any>server.models)[key])).messages);
-  // }
+  for (const key of Object.keys(server.models)) {
+    console.log((await db.table.create(key, (<any>server.models)[key])).messages);
+  }
 
   console.log('host: ' + os.hostname());
 });

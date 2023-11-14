@@ -31,6 +31,14 @@ export type User = {
   avatar: string,
 }
 
+export type Update = {
+  id: number,
+  userID: number,
+  timestamp: number,
+  body: string,
+  search: string
+}
+
 export type Contact = {
   id: number,
   email: string,

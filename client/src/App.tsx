@@ -27,6 +27,13 @@ import StorageService from './services/storage.service';
 import { EventPerformance } from './models/models';
 
 import config from './config/config';
+import AdminUsers from './pages/admin/admin-users';
+import AdminMedia from './pages/admin/admin-media';
+import AdminTracks from './pages/admin/admin-tracks';
+import AdminEvents from './pages/admin/admin-events';
+import AdminReviews from './pages/admin/admin-reviews';
+import AdminContacts from './pages/admin/admin-contacts';
+import AdminNews from './pages/admin/admin-news';
 
 const streamEvents = async (afterID: number) => {
   
@@ -105,6 +112,14 @@ function App() {
               <Route path="gallery" element={<GalleryPage />} />
               <Route path="nopage" element={<NoPage />} />
               <Route path="admin" element={<Admin />} />
+              <Route path="admin/users" element={<AdminUsers/>} />
+              <Route path="admin/media" element={<AdminMedia/>} />
+              <Route path="admin/tracks" element={<AdminTracks/>} />
+              <Route path="admin/events" element={<AdminEvents/>} />
+              <Route path="admin/reviews" element={<AdminReviews/>} />
+              <Route path="admin/reviews/:id" element={<AdminReviews/>} />
+              <Route path="admin/contacts" element={<AdminContacts/>} />
+              <Route path="admin/news" element={<AdminNews/>} />
               <Route path="*" element={<NoPage />} />
             </Routes>
             <Footer 
