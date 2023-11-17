@@ -33,9 +33,10 @@ export type User = {
 
 export type Update = {
   id: number,
-  userID: number,
   timestamp: number,
-  body: string,
+  subject: string,
+  date: string,
+  update: string,
   search: string
 }
 
@@ -87,10 +88,12 @@ const models = {
   },
   update: {
     id: `SERIAL`,
-    userID: `NUMERIC`,
     timestamp: `NUMERIC`,
-    body: `TEXT`,
-    search: `TEXT`
+    subject: `TEXT`,
+    date: `TEXT`,
+    update: `TEXT`,
+    search: `TEXT`,
+    PRIMARY: `KEY (id)`
   },
   contact: {
     id: `SERIAL`,

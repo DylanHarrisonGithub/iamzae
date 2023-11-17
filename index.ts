@@ -69,7 +69,7 @@ app.listen(process.env.PORT || 3000, async () => {
   //   console.log((await db.table.delete(key)).messages);
   // }
 
-  // console.log(await db.table.delete('event'));
+  // console.log(await db.table.delete('update'));
   
   // //!!!! uncomment before deploying !!!!
   for (const key of Object.keys(server.models)) {

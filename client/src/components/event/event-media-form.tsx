@@ -42,7 +42,7 @@ const EventMediaForm: React.FC<Props> = ({ media, associatedMedia, resolve }) =>
         <button 
           className={`btn btn-primary ml-auto`}
           onClick={ () => resolve(selectedMedia) }
-        >Finish</button>
+        >Accept</button>
       </div>
       <div className='w-[600px] max-h-96 overflow-y-auto'>
         <Gallery title="Media">

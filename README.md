@@ -1,3 +1,3 @@
 # iamzae
 deployment demo:
-https://iamzae-test-mc02-dev.fl0.io/
+https://iamzae-dev-pnmh.4.us-1.fl0.io

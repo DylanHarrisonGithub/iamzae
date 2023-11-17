@@ -1,3 +1,11 @@
+import updateupdateRoute from './updateupdate/updateupdate.route';
+import updateupdateSchema from './updateupdate/updateupdate.schema';
+import updatecreateRoute from './updatecreate/updatecreate.route';
+import updatecreateSchema from './updatecreate/updatecreate.schema';
+import updatedeleteRoute from './updatedelete/updatedelete.route';
+import updatedeleteSchema from './updatedelete/updatedelete.schema';
+import updatestreamRoute from './updatestream/updatestream.route';
+import updatestreamSchema from './updatestream/updatestream.schema';
 import approvedreviewstreamRoute from './approvedreviewstream/approvedreviewstream.route';
 import approvedreviewstreamSchema from './approvedreviewstream/approvedreviewstream.schema';
 import contactstreamRoute from './contactstream/contactstream.route';
@@ -52,6 +60,34 @@ export interface Route {
 }
 
 const routes: { [key: string]: Route } = {
+ updateupdate: {
+    method: ['PATCH'],
+    contentType: "application/json",
+    privilege: ['user'],
+    schema: updateupdateSchema,
+    route: updateupdateRoute 
+  },
+ updatecreate: {
+    method: ['POST'],
+    contentType: "application/json",
+    privilege: ['user'],
+    schema: updatecreateSchema,
+    route: updatecreateRoute 
+  },
+ updatedelete: {
+    method: ['DELETE'],
+    contentType: "application/json",
+    privilege: ['user'],
+    schema: updatedeleteSchema,
+    route: updatedeleteRoute 
+  },
+ updatestream: {
+    method: ['GET'],
+    contentType: "application/json",
+    privilege: ['guest'],
+    schema: updatestreamSchema,
+    route: updatestreamRoute 
+  },
  approvedreviewstream: {
     method: ['GET'],
     contentType: "application/json",

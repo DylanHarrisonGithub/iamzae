@@ -1,21 +1,82 @@
 import React from "react";
 
-const News: React.FC<any> = (props: any) => {
-  return (
-    <div className="pt-16">News
-        <div className="bg-purple-500 text-center p-8">
-          {
-            Array(12).fill(0).map(u => (
-              <div className='inline-block relative glass w-56 h-56 mx-2 my-1 rounded-md shadow-lg hover:shadow-xl cursor-pointer'>
-                <div className=" absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 m-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="4em" viewBox="0 0 448 512" className="block mx-auto"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>          
+import Update from "../components/update/update";
 
-                  <p className='mt-4'>Media</p>
-                </div>
-              </div>
-            ))
-          }
+import HttpService from "../services/http.service";
+
+import { UpdateType } from "../models/models";
+
+const News: React.FC<any> = (props: any) => {
+
+  const [updates, setUpdates] = React.useState<UpdateType[]>([]);
+  const [busy, setBusy] = React.useState<boolean>(true);
+
+  const [media, setMedia] = React.useState<string[]>([]);
+
+  const streamUpdates = async (afterID?: number) => {
+    const streamRes = await HttpService.get<UpdateType[]>('updatestream', { afterID: afterID || 0, numrows: 10 });
+    if (streamRes.success && streamRes.body && streamRes.body.length) {
+      if (streamRes.body.length < 10) {
+        setBusy(false);
+      }
+      if (afterID) {
+        setUpdates(updates => [...updates, ...streamRes.body!.filter(sru => !updates.some(u => u.id === sru.id)) ].sort((a, b) => a.id! - b.id!));
+      } else {
+        setUpdates(streamRes.body);
+      }
+    } else {
+      setBusy(false);
+    }
+  };
+
+  React.useEffect(() => {(async () => {
+    if (busy) {
+      streamUpdates(updates.length ? updates.at(-1)?.id! : 0);
+    }
+  })();}, [updates]);
+
+  React.useEffect(() => {
+    setBusy(true);
+    streamUpdates();
+  }, []);
+
+  return (
+    <div className="py-16 px-4 mx-auto fan">
+
+      <div className="text-center p-1 m-3 mt-4">
+        <div className='inline-block relative mx-2 my-4 align-top text-left w-11/12 md:w-4/12'>
+          <div className="text-left">
+            <h1 className="text-xl gold-text text-center align-middle inline-block">
+              &nbsp;&nbsp;Admin News&nbsp;&nbsp;
+            </h1>
+          </div>
         </div>
+
+        <div className='inline-block relative mx-2 my-3 w-11/12 md:w-5/12 text-left'>
+          <input
+            className="bg-gray-200 text-left md:text-right appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            type="text"
+            placeholder="Search Updates"
+            value={''}
+            onInput={(e: React.ChangeEvent<HTMLInputElement>) => {}}
+          />
+        </div>
+
+      </div>
+
+      <div className="p-1 m-3 rounded-lg glass">
+        <p className="text-white ml-8 mt-8 mb-4">Updates</p>
+        {
+          updates.map((u, i) => (<Update key={i} update={u} />))
+        }
+        {
+          busy &&
+            <div className="text-center">
+              <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            </div>
+        }  
+      </div>
+
 
     </div>
   )

@@ -11,9 +11,10 @@ import EventService from "../services/event.service";
 
 import { StorageContext } from "../components/storage/storage-context";
 
-import { EventPerformance, Review } from "../models/models";
+import { EventPerformance, Review, UpdateType } from "../models/models";
 
 import { timeData } from "../models/models";
+import Update from "../components/update/update";
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
 
@@ -25,6 +26,9 @@ const Home: React.FC<any> = (props: any) => {
   const [derivedEvents, setDerivedEvents] = React.useState<EventPerformance[]>([]);
   const [reviews, setReviews] = React.useState<Review[]>([]);
   const [busy2, setBusy2] = React.useState<boolean>(true);
+  const [updates, setUpdates] = React.useState<UpdateType[]>([]);
+  const [updatesBusy, setUpdatesBusy] = React.useState<boolean>(true);
+
 
   React.useEffect(() => {
     (async () => setDerivedEvents((await EventService.generateDerivedEvents((storageContext.events as EventPerformance[]) || [])).body!) )();
@@ -39,6 +43,10 @@ const Home: React.FC<any> = (props: any) => {
       }   
       setBusy2(false);
     })();
+    HttpService.get<UpdateType[]>('updatestream', { afterID: 0, numrows: 5 }).then((urs) => {
+      setUpdates(urs.body || []);
+      setUpdatesBusy(false);
+    });
   }, []);
 
   return (
@@ -95,6 +103,20 @@ Sample pads and drum machines add dynamic layers, while synthesizers contribute 
           </p>
         </div>
       </Hero>
+
+
+      <div className="p-1 m-3">
+        <p className="text-white ml-8 mt-8 mb-4">Latest News</p>
+        {
+          updates.map((u, i) => (<Update key={i} update={u} />))
+        }
+        {
+          updatesBusy &&
+            <div className="text-center">
+              <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            </div>
+        }  
+      </div>
 
       <Hero>
         { 

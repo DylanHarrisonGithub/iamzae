@@ -31,12 +31,13 @@ export type User = {
   avatar: string,
 }
 
-export type Update = {
+export type UpdateType = {
   id: number,
-  userID: number,
-  timestamp: number,
-  body: string,
-  search: string
+  // userID: number,
+  // timestamp: number,
+  subject: string,
+  date: string,
+  update: string
 }
 
 export type Contact = {
