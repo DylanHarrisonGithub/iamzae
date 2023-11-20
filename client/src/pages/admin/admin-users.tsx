@@ -4,6 +4,10 @@ import { User } from "../../models/models";
 import HttpService from "../../services/http.service";
 import { ModalContext } from "../../components/modal/modal";
 
+const acceptedMedia = [
+  'gif', 'jpg', 'jpeg', 'png'
+];
+
 const AdminUsers: React.FC<any> = (props: any) => {
 
   const modalContext = React.useContext(ModalContext);
@@ -23,6 +27,18 @@ const AdminUsers: React.FC<any> = (props: any) => {
       console.log(route, res.messages);
     }
   });
+
+  React.useEffect(() => {
+    (async () => {
+      const res = await quickGet<string[]>('medialist');
+      setMedia(
+        res ?
+          res.filter(m => acceptedMedia.filter(accepted => m.toLowerCase().endsWith(accepted)).length)
+        :
+          []
+      );
+    })();
+  }, [])
   
   return (
     <div className="py-16 px-4 mx-auto bubbles">

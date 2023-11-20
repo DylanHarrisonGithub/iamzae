@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 
 import { UpdateType } from '../../models/models';
-// type Update = {
-//   subject: string,
-//   date: string,
-//   update: string
-// };
 
 interface UpdateFormProps {
   resolve: (update: UpdateType | null) => any
@@ -13,9 +8,15 @@ interface UpdateFormProps {
 }
 
 const UpdateForm: React.FC<UpdateFormProps> = ({ resolve, updateInit }) => {
-  const [subject, setSubject] = useState('');
-  const [date, setDate] = useState((() => { let d = new Date(); return `${d.getMonth().toString().padStart(2,'0')}/${d.getDay().toString().padStart(2,'0')}/${d.getFullYear()}`})());
-  const [update, setUpdate] = useState('');
+  const [subject, setSubject] = useState(updateInit?.subject || '');
+  const [date, setDate] = useState((() => { 
+    if (updateInit && updateInit.date) {
+      return updateInit?.date;
+    }
+    let d = new Date(); 
+    return `${d.getMonth().toString().padStart(2,'0')}/${d.getDay().toString().padStart(2,'0')}/${d.getFullYear()}`
+  })());
+  const [update, setUpdate] = useState(updateInit?.update || '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

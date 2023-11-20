@@ -1,0 +1,13 @@
+[ ]  All strings inserted and retrieved from db require processing to escape single quote characters
+[ ]  password reset for admin accounts
+[ ]  email service
+[ ]  gallery component upgrade to non grid based version and column stacked media elements
+[ ]  fix video media previews are not visible on mobile safari
+[ ]  music tracks upload, delete
+[ ]  music visualization
+[ ]  fix month calendar on home page is off center
+[ ]  find working rich text editor for updates
+[x]  search news updates on news and admin news page
+[ ]  fix media viewer modals display size is not good
+[ ]  news update form input validation
+[ ]  fix event-form modal on mobile does not fit in screen

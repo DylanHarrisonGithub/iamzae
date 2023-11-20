@@ -18,4 +18,4 @@ export default async (request: ParsedRequest<
       messages: queryResult.messages
     }
   }))
-}
+};

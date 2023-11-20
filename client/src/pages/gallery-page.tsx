@@ -1,6 +1,7 @@
 import React from "react";
 
 import Gallery2 from "../components/gallery/gallery2";
+import Gallery3 from "../components/gallery/gallery3";
 import { ModalContext } from "../components/modal/modal";
 
 import HttpService from "../services/http.service";
@@ -46,10 +47,10 @@ const GalleryPage: React.FC<any> = (props: any) => {
           )
         }
         { (!busy && mediaFileList.length) && (
-          <Gallery2>
+          <Gallery3>
             {
               mediaFileList.map(a => (
-                <span key={a} className="relative">
+                <span key={a} className="inline-block relative my-1">
                   {
                     acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
                       <img 
@@ -107,7 +108,7 @@ const GalleryPage: React.FC<any> = (props: any) => {
                 </span>
               ))
             }
-          </Gallery2>
+          </Gallery3>
         )}
 
       </div>

@@ -12,7 +12,7 @@ export default async (request: any): Promise<RouterResponse> => {
 
   const res = await DB.row.create('user', { username: username, privilege: 'user', password: hash, salt: salt, avatar: `https://avatars.dicebear.com/api/male/john.svg?background=%230000ff` });
 
-  const token = await authentication.generateToken({username: username, privelilege: 'user', dummy: ""});
+  const token = await authentication.generateToken({username: username, privilege: 'user', dummy: ""});
   
   if (res.success && token.success) {
     return new Promise(resolve => resolve({ 
