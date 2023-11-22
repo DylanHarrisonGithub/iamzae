@@ -17,7 +17,7 @@ const Gallery2: React.FC<any> = (props: Gallery2Props) => {
         <div className="grid grid-cols-1 gap-y-1 gap-x-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {
             React.Children.map(props.children, (node, i) => (
-              <div key={i} className="flex justify-items-center justify-self-center">
+              <div key={i} className="flex justify-items-center justify-self-center w-full relative">
                 { node }
               </div>
             ))

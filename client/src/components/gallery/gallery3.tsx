@@ -30,12 +30,13 @@ const Gallery2: React.FC<any> = (props: Gallery3Props) => {
           <div 
             key={i}
             ref={columnRefs.current[i]}
-            className={`inline-block w-72 m-1 align-top`}
+            className={`inline-block md:w-72 m-1 align-top`}
           > 
             { columns[i] }
           </div>
         ))
       }
+
     </div>
   )
 }

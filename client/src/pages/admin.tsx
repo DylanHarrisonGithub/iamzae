@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { ModalContext } from '../components/modal/modal';
 import { StorageContext } from '../components/storage/storage-context';
+import Gallery2 from '../components/gallery/gallery2';
 
 const buttons: { title: string, route: string, svg: React.ReactElement<SVGElement> }[] = [
   { title: 'Users', route: '/admin/users', svg: (<svg xmlns="http://www.w3.org/2000/svg" height="4em" viewBox="0 0 448 512"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>)},
@@ -46,7 +47,7 @@ const Admin: React.FC<any> = (props: any) => {
         }
       </div>
 
-      <div className="text-center p-1 m-1 md:p-8 md:m-8 bg-slate-400 bg-opacity-90 rounded-lg">
+      {/* <div className="text-center p-1 m-1 md:p-8 md:m-8 bg-slate-400 bg-opacity-90 rounded-lg">
         <h1 className='mb-8'>Content Management</h1>
         {
           buttons.map((b, i) => (
@@ -63,6 +64,27 @@ const Admin: React.FC<any> = (props: any) => {
             </Link>
           ))
         }
+      </div> */}
+
+      <div className='bg-slate-400 text-center bg-opacity-90 rounded-lg p-1 m-1  md:p-8 md:m-8'>
+      <h1 className='mb-8'>Content Management</h1>
+        <Gallery2>
+        {
+          buttons.map((b, i) => (
+            <Link 
+              key={i}
+              className='flex relative glass aspect-1 w-full rounded-md shadow-lg hover:shadow-xl cursor-pointer m-1'
+              to={b.route}
+            >
+              <div className=" absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 m-0">
+
+                {b.svg}
+                <p className='mt-4'>{b.title}</p>
+              </div>
+            </Link>
+          ))
+        }
+        </Gallery2>
       </div>
 
     </div>

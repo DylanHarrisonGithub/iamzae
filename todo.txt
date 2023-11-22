@@ -3,11 +3,19 @@
 [ ]  email service
 [ ]  gallery component upgrade to non grid based version and column stacked media elements
 [ ]  fix video media previews are not visible on mobile safari
-[ ]  music tracks upload, delete
+[ ]  music tracks admin page
+[x]  mini-track component, play, pause, title, tracker
+[x]  music tracks upload, delete
 [ ]  music visualization
+[ ]  listen page
 [ ]  fix month calendar on home page is off center
 [ ]  find working rich text editor for updates
 [x]  search news updates on news and admin news page
 [ ]  fix media viewer modals display size is not good
 [ ]  news update form input validation
 [ ]  fix event-form modal on mobile does not fit in screen
+[ ]  navigate home from each admin page if not logged in
+[ ]  upload media and upload tracks server routes should prohibit unsupported file types
+[ ]  delete media and track routes require schema to ensure filename is provided
+[ ]  delete media and track route is returning success message even if file does not exist
+[ ]  media used in static fixed elements in site should not be kept in the media folder or be deleteable

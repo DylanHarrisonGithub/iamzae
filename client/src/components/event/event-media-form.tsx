@@ -4,6 +4,8 @@ import { ModalContext } from '../modal/modal';
 import Gallery from '../gallery/gallery';
 
 import config from '../../config/config';
+import Gallery2 from '../gallery/gallery2';
+import Gallery3 from '../gallery/gallery3';
 
 type Props = {
   media: string[],
@@ -44,7 +46,7 @@ const EventMediaForm: React.FC<Props> = ({ media, associatedMedia, resolve }) =>
           onClick={ () => resolve(selectedMedia) }
         >Accept</button>
       </div>
-      <div className='w-[600px] max-h-96 overflow-y-auto'>
+      <div className='w-[400px] md:w-[600] max-h-96 overflow-y-auto mt-2'>
         <Gallery title="Media">
           {
             [...media, ...selectedMedia.filter(sm => !media.includes(sm))].map(a => (
@@ -63,8 +65,7 @@ const EventMediaForm: React.FC<Props> = ({ media, associatedMedia, resolve }) =>
                   acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
                     <img 
                       className="inline-block cursor-pointer" 
-                      width={64} 
-                      height={64} 
+
                       src={
                         (
                           a.toUpperCase().startsWith('HTTP://') ||
@@ -80,8 +81,8 @@ const EventMediaForm: React.FC<Props> = ({ media, associatedMedia, resolve }) =>
                     </img>
                   :
                     <video
-                      className='cursor-pointer'
-                      width={64} height={64}
+                      className='inline-block cursor-pointer'
+
                       src={
                         (
                           a.toUpperCase().startsWith('HTTP://') ||

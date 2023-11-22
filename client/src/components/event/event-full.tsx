@@ -12,6 +12,8 @@ import { ModalContext } from '../modal/modal';
 import ReviewComponent from '../review/review';
 import ReviewForm from '../review/review-form';
 import MiniMediaViewer from '../media-viewer/mini-media-viewer';
+import Gallery3 from '../gallery/gallery3';
+import Gallery2 from '../gallery/gallery2';
 
 const acceptedMedia = [
   'gif', 'jpg', 'jpeg', 'png',
@@ -53,7 +55,7 @@ const EventFull: React.FC<EventListItemProps> = ({ event }) => {
         <div className="p-4 border border-gray-300 rounded shadow-md">
           <h1 className="p-4">Media for this event</h1>
           { !!event.media.length && 
-            <Gallery>
+            <Gallery3>
               {
                 event.media.map(a => (
                   <span 
@@ -75,7 +77,7 @@ const EventFull: React.FC<EventListItemProps> = ({ event }) => {
                   </span>
                 ))
               }
-            </Gallery>
+            </Gallery3>
           }
           {
             !(event.media?.length) && 

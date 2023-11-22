@@ -1,3 +1,9 @@
+import deletetrackRoute from './deletetrack/deletetrack.route';
+import deletetrackSchema from './deletetrack/deletetrack.schema';
+import tracklistRoute from './tracklist/tracklist.route';
+import tracklistSchema from './tracklist/tracklist.schema';
+import uploadtrackRoute from './uploadtrack/uploadtrack.route';
+import uploadtrackSchema from './uploadtrack/uploadtrack.schema';
 import updateupdateRoute from './updateupdate/updateupdate.route';
 import updateupdateSchema from './updateupdate/updateupdate.schema';
 import updatecreateRoute from './updatecreate/updatecreate.route';
@@ -60,6 +66,27 @@ export interface Route {
 }
 
 const routes: { [key: string]: Route } = {
+ deletetrack: {
+    method: ['DELETE'],
+    contentType: "application/json",
+    privilege: ['user'],
+    schema: deletetrackSchema,
+    route: deletetrackRoute 
+  },
+ tracklist: {
+    method: ['GET'],
+    contentType: "application/json",
+    privilege: ['guest'],
+    schema: tracklistSchema,
+    route: tracklistRoute 
+  },
+ uploadtrack: {
+    method: ['POST'],
+    contentType: "application/json",
+    privilege: ['user'],
+    schema: uploadtrackSchema,
+    route: uploadtrackRoute 
+  },
  updateupdate: {
     method: ['PATCH'],
     contentType: "application/json",
