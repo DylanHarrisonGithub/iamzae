@@ -2,6 +2,7 @@ import React from "react";
 
 import Gallery2 from "../components/gallery/gallery2";
 import Gallery3 from "../components/gallery/gallery3";
+import Gallery4 from "../components/gallery/gallery4";
 import { ModalContext } from "../components/modal/modal";
 
 import HttpService from "../services/http.service";
@@ -37,7 +38,7 @@ const GalleryPage: React.FC<any> = (props: any) => {
       <h1 className="text-xl gold-text text-center align-middle inline-block ml-2 md:ml-8 mt-16">
           &nbsp;&nbsp;Media Gallery&nbsp;&nbsp;
       </h1>
-      <div className="container py-16 min-h-screen  mx-auto">
+      <div className=" min-h-screen  mx-auto">
 
         {
           busy && (
@@ -47,14 +48,15 @@ const GalleryPage: React.FC<any> = (props: any) => {
           )
         }
         { (!busy && mediaFileList.length) && (
-          <Gallery3>
+          <Gallery4 maxColumnWidth={288} maxColumns={6}>
             {
               mediaFileList.map(a => (
-                <span key={a} className="inline-block relative my-1">
+                <span key={a} className="inline-block relative my-[1px] mx-[1px]">
                   {
                     acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
-                      <img 
-                        className="inline-block cursor-pointer" 
+                      <img
+                        loading={"lazy"}
+                        className="inline-block cursor-pointer m-0 p-0" 
                         src={
                           (
                             a.toUpperCase().startsWith('HTTP://') ||
@@ -80,7 +82,7 @@ const GalleryPage: React.FC<any> = (props: any) => {
                       </img>
                     :
                       <video
-                        className='cursor-pointer'
+                        className='cursor-pointer -mb-2 p-0'
                         src={
                           (
                             a.toUpperCase().startsWith('HTTP://') ||
@@ -91,7 +93,7 @@ const GalleryPage: React.FC<any> = (props: any) => {
                           :
                             config.ASSETS[config.ENVIRONMENT] + `media/${a}`
                         }
-                        autoPlay={false} muted={true} loop={true}
+                        autoPlay={false} muted={true} loop={true} playsInline={true} 
                         onClick={() => {
                           (new Promise<any>((res, rej) => {
                             modalContext.modal!({
@@ -108,7 +110,7 @@ const GalleryPage: React.FC<any> = (props: any) => {
                 </span>
               ))
             }
-          </Gallery3>
+          </Gallery4>
         )}
 
       </div>

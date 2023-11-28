@@ -4,7 +4,7 @@ type Gallery3Props = {
   children?: React.ReactNode[]
 }
 
-const Gallery2: React.FC<any> = (props: Gallery3Props) => {
+const Gallery3: React.FC<any> = (props: Gallery3Props) => {
 
   const containerRef = React.useRef<HTMLDivElement | null>(null)
   const columnRefs = React.useRef([]);
@@ -41,4 +41,4 @@ const Gallery2: React.FC<any> = (props: Gallery3Props) => {
   )
 }
 
-export default Gallery2;
+export default Gallery3;

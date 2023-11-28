@@ -1,7 +1,7 @@
 [ ]  All strings inserted and retrieved from db require processing to escape single quote characters
 [ ]  password reset for admin accounts
 [ ]  email service
-[ ]  gallery component upgrade to non grid based version and column stacked media elements
+[x]  gallery component upgrade to non grid based version and column stacked media elements
 [ ]  fix video media previews are not visible on mobile safari
 [ ]  music tracks admin page
 [x]  mini-track component, play, pause, title, tracker
@@ -19,3 +19,4 @@
 [ ]  delete media and track routes require schema to ensure filename is provided
 [ ]  delete media and track route is returning success message even if file does not exist
 [ ]  media used in static fixed elements in site should not be kept in the media folder or be deleteable
+[ ]  lazy loading for images and videos
