@@ -105,7 +105,7 @@ const Track: React.FC<MiniTrackType> = ({ audioFileName, play, onPlayToggle }) =
             disabled={false && loadError}
             type="range" 
             min={0} 
-            max={Math.floor(audioElement.duration)} 
+            max={Math.floor(audioElement.duration) || 0} 
             value={index} 
             className="range range-secondary range-xs mt-4"
             onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,9 +141,16 @@ const Track: React.FC<MiniTrackType> = ({ audioFileName, play, onPlayToggle }) =
           }
           {
             loaded &&
-              <span className=" text-white">
-                {`${Math.floor(index / 60).toString().padStart(2, '0')}:${(index % 60).toString().padStart(2, '0')}/${Math.floor(audioElement.duration / 60).toString().padStart(2, '0')}:${(Math.round(audioElement.duration) % 60).toString().padStart(2, '0')}`}
-              </span>
+              <div className="flex justify-center items-center w-full h-full">
+                <div className="block">
+                  <span className=" text-white inline-block">
+                    {`${Math.floor(index / 60).toString().padStart(2, '0')}:${(index % 60).toString().padStart(2, '0')}/`}
+                  </span>
+                  <span className=" text-white inline-block">
+                    {`${Math.floor(audioElement.duration / 60).toString().padStart(2, '0')}:${(Math.round(audioElement.duration) % 60).toString().padStart(2, '0')}`}
+                  </span>
+                </div>
+              </div>
           }
         </div>
       </div>

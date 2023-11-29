@@ -10,8 +10,8 @@ const acceptedMedia = ['mp3', 'wav', 'ogg'];
 const AdminTracks: React.FC<any> = (props: any) => {
 
   const modalContext = React.useContext(ModalContext);
-  const [trackList, setTrackList] = React.useState<string[]>(['test.wav', `https://upload.wikimedia.org/wikipedia/commons/b/ba/Beethoven_Piano_Sonata_21%2C_1st_movement%2C_bars_78-84.wav`]);
-  const [trackPlay, setTrackPlay] = React.useState<boolean[]>([false, false]);
+  const [trackList, setTrackList] = React.useState<string[]>([]);
+  const [trackPlay, setTrackPlay] = React.useState<boolean[]>([]);
 
   React.useEffect(() => {
     (async () => {
@@ -23,6 +23,8 @@ const AdminTracks: React.FC<any> = (props: any) => {
       }
     })();
   }, []);
+
+  React.useEffect(() => setTrackPlay(Array(trackList.length).fill(false)), [trackList]);
 
   return (
     <div className="py-16 px-4 mx-auto diamonds">
@@ -66,7 +68,7 @@ const AdminTracks: React.FC<any> = (props: any) => {
                 className="absolute -right-3 -top-3 bg-red-500 p-1 rounded-full w-10 h-10 cursor-pointer border-2 border-black"
                 onClick={() => (modalContext.modal!({prompt: `Are you sure you want to delete\n ${t}?`, options: ["yes", "no"]}))!.then(res => {
                   if (res === "yes") {
-                    HttpService.delete<void>('deletemedia', { filename: t }).then(res => {
+                    HttpService.delete<void>('deletetrack', { filename: t }).then(res => {
                       if (res.success) {
                         setTrackList(oldTrackList => oldTrackList.filter(trackListFilename => trackListFilename !== t));
                         res.messages.forEach(m => modalContext.toast!('success', m));

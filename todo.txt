@@ -3,7 +3,7 @@
 [ ]  email service
 [x]  gallery component upgrade to non grid based version and column stacked media elements
 [ ]  fix video media previews are not visible on mobile safari
-[ ]  music tracks admin page
+[x]  music tracks admin page
 [x]  mini-track component, play, pause, title, tracker
 [x]  music tracks upload, delete
 [ ]  music visualization
@@ -11,7 +11,7 @@
 [ ]  fix month calendar on home page is off center
 [ ]  find working rich text editor for updates
 [x]  search news updates on news and admin news page
-[ ]  fix media viewer modals display size is not good
+[ ]  fix media viewer modals display aspect ratio
 [ ]  news update form input validation
 [ ]  fix event-form modal on mobile does not fit in screen
 [ ]  navigate home from each admin page if not logged in

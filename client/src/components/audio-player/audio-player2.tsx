@@ -1,22 +1,22 @@
 import React, { useRef, useEffect, useState } from "react";
 
-interface AudioPlayerProps {
-  audioFilePath: string;
+interface AudioPlayer2Props {
+  audioElement: HTMLAudioElement | null
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioFilePath }) => {
+const AudioPlayer2: React.FC<AudioPlayer2Props> = ({ audioElement }) => {
   
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
+
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const canvas = canvasRef.current;
     const canvasCtx = canvas?.getContext("2d");
 
-    if (audioContext && canvasCtx && audioRef.current) {
-      const audioElement = audioRef.current;
+    if (audioContext && canvasCtx && audioElement) {
+
       const analyser = audioContext.createAnalyser();
       const source = audioContext.createMediaElementSource(audioElement);
       source.connect(analyser);
@@ -42,7 +42,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioFilePath }) => {
   
           requestAnimationFrame(drawVisualizer);
         }
-
+        
       };
 
       audioElement.addEventListener("play", () => {
@@ -53,41 +53,16 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioFilePath }) => {
       audioElement.addEventListener("pause", () => {
         setIsPlaying(false);
       });
-
-      audioElement.src = audioFilePath;
     }
 
-    return () => {
-      if (audioContext) {
-        audioContext.close().catch((error) => {
-          console.error("Failed to close audio context:", error);
-        });
-      }
-    };
-  }, [audioFilePath]);
-
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-    }
-  };
+  }, [audioElement]);
 
   return (
     <div className="flex flex-col items-center mt-8">
       <canvas ref={canvasRef} className="w-full h-32 mb-4"></canvas>
-      <audio crossOrigin="anonymous" ref={audioRef} />
-      <button
-        onClick={togglePlay}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none"
-      >
-        {isPlaying ? "Pause" : "Play"}
-      </button>
+      <p className="text-white">{audioElement && (audioElement!.paused).toString()}</p>
     </div>
   );
 };
 
-export default AudioPlayer;
+export default AudioPlayer2;

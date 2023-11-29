@@ -14,10 +14,10 @@ export default async (request: ParsedRequest): Promise<RouterResponse> => {
       } 
     }));
   }
-
+  console.log('attempting to delete');
   try {
     const resDel = await file.delete(`public/tracks/` + request.params.filename);
-
+    console.log('hello', resDel);
     return new Promise(res => res({ code: 200, json: { success: true, messages: [
       `SERVER - ROUTES - DELETETRACK - Media file ${request.params.filename} successfully deleted.`,
       ...resDel.messages
