@@ -1,11 +1,7 @@
 import React from "react";
 
 import config from "../../config/config";
-
-const acceptedMedia = [
-  'gif', 'jpg', 'jpeg', 'png',
-  'mov', 'mp4', 'mpeg', 'webm', 'ogg'
-];
+import { acceptedMediaExtensions } from "../../models/models";
 
 export type MediaViewerProps = { filename: string }
 
@@ -13,7 +9,7 @@ const MediaViewer: React.FC<any> = ({ filename }) => {
   return (
     <div>
      {
-        acceptedMedia.slice(0, 4).filter(accepted => filename.toLowerCase().endsWith(accepted)).length ?
+        acceptedMediaExtensions.image.filter(accepted => filename.toLowerCase().endsWith(accepted)).length ?
           <img 
             style={{height: window.innerHeight-100}}
             height={ window.innerHeight - 100 }

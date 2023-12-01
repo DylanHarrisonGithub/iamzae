@@ -6,8 +6,8 @@
 [x]  music tracks admin page
 [x]  mini-track component, play, pause, title, tracker
 [x]  music tracks upload, delete
-[ ]  music visualization
-[ ]  listen page
+[x]  music visualization
+[x]  listen page
 [ ]  fix month calendar on home page is off center
 [ ]  find working rich text editor for updates
 [x]  search news updates on news and admin news page
@@ -20,3 +20,6 @@
 [ ]  delete media and track route is returning success message even if file does not exist
 [ ]  media used in static fixed elements in site should not be kept in the media folder or be deleteable
 [ ]  lazy loading for images and videos
+[ ]  centralize accepted media extensions and import where needed
+[ ]  homepage latest news default alternative when there are no news updates
+[ ]  homepage reviews default alternative when there are no approved reviews

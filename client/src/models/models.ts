@@ -1,5 +1,11 @@
 import { Schema } from "../services/validation.service";
 
+export const acceptedMediaExtensions = {
+  image: ['gif', 'jpg', 'jpeg', 'png', 'heic'],
+  video: ['mov', 'mp4', 'mpeg', 'webm', 'ogg'],
+  audio: ['mp3', 'wav', 'ogg']
+};
+
 export const timeData = {
   periods: [ 'Once', 'Daily', 'Weekly', 'BiWeekly', 'Monthly' ] as const,
   weekdays: [

@@ -1,19 +1,14 @@
 import React from "react";
 
-import Gallery2 from "../components/gallery/gallery2";
-import Gallery3 from "../components/gallery/gallery3";
 import Gallery4 from "../components/gallery/gallery4";
+import MediaViewer from "../components/media-viewer/media-viewer";
+
 import { ModalContext } from "../components/modal/modal";
 
 import HttpService from "../services/http.service";
 
 import config from "../config/config";
-import MediaViewer from "../components/media-viewer/media-viewer";
-
-const acceptedMedia = [
-  'gif', 'jpg', 'jpeg', 'png',
-  'mov', 'mp4', 'mpeg', 'webm', 'ogg'
-];
+import { acceptedMediaExtensions } from "../models/models";
 
 const GalleryPage: React.FC<any> = (props: any) => {
 
@@ -28,7 +23,7 @@ const GalleryPage: React.FC<any> = (props: any) => {
       const res = await HttpService.get<string[]>('medialist');
       if (res.success && res.body) {
         setBusy(false);
-        setMediaFileList(res.body);
+        setMediaFileList(res.body.filter(filename => acceptedMediaExtensions.image.filter(accepted => filename.toLowerCase().endsWith(accepted)).length || acceptedMediaExtensions.video.filter(accepted => filename.toLowerCase().endsWith(accepted)).length));
       } 
     })();
   }, [])
@@ -53,7 +48,7 @@ const GalleryPage: React.FC<any> = (props: any) => {
               mediaFileList.map(a => (
                 <span key={a} className="inline-block relative my-[1px] mx-[1px]">
                   {
-                    acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
+                    acceptedMediaExtensions.image.filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
                       <img
                         loading={"lazy"}
                         className="inline-block cursor-pointer m-0 p-0" 
