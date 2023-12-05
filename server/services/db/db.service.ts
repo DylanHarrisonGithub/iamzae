@@ -2,7 +2,15 @@ import pg from 'pg';
 
 import { Service, ServicePromise } from '../services';
 
-const quoteString = (val: string | number | boolean): string | number | boolean => (typeof val === 'string') ? "'"+val+"'" : val;
+const quoteString = (val: string | number | boolean): string | number | boolean => (typeof val === 'string') ? "'"+escape(val)+"'" : val;
+const escape = (v: string) => v.replace(/'/g, `''`);
+const unescape = (v: string) => v.replace(/''/g, `'`);
+const unescapeRows = (rows: any) => (rows as { [key:string]: any }[]).map(row => Object.keys(row).reduce((acc, key) => 
+  typeof row[key] === 'string' ? 
+    { [key]: unescape(row[key]), ...acc}
+  :
+    { [key]: row[key], ...acc}  , {} as { [key:string]: any })
+);
 
 const db = ((): typeof service extends Service ? typeof service : never => {
   const service = {
@@ -55,7 +63,7 @@ const db = ((): typeof service extends Service ? typeof service : never => {
         };`;
         try {
           await client.connect();
-          const result = <T>((await client.query(query)).rows as unknown);
+          const result = <T>(unescapeRows((await client.query(query)).rows) as unknown);
           await client.end();
           return {
             success: true,
@@ -99,7 +107,7 @@ const db = ((): typeof service extends Service ? typeof service : never => {
         } ORDER BY id ASC LIMIT ${numrows};`;
         try {
           await client.connect();
-          const result = <T>((await client.query(query)).rows as unknown);
+          const result = <T>(unescapeRows((await client.query(query)).rows) as unknown);
           await client.end();
           return {
             success: true,
@@ -157,7 +165,7 @@ const db = ((): typeof service extends Service ? typeof service : never => {
 
         try {
           await client.connect();
-          const result = <T>(((await client.query(query)).rows as unknown[])[0]);
+          const result = <T>((unescapeRows((await client.query(query)).rows) as unknown[])[0]);
           await client.end();
           return {
             success: true,
@@ -220,7 +228,7 @@ const db = ((): typeof service extends Service ? typeof service : never => {
         const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
         try {
           await client.connect();
-          const result = <T>((await client.query(query)).rows as unknown);
+          const result = <T>(unescapeRows((await client.query(query)).rows) as unknown);
           await client.end();
           return {
             success: true,

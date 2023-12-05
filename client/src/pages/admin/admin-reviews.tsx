@@ -32,7 +32,7 @@ const AdminReviews: React.FC<any> = (props: any) => {
   return (
     <div className="py-16 px-4 mx-auto bubbles">
       <h1 className="text-xl gold-text text-center align-middle inline-block ml-2 md:ml-8 mt-16">
-        &nbsp;&nbsp;Admin Users&nbsp;&nbsp;
+        &nbsp;&nbsp;Admin Reviews&nbsp;&nbsp;
       </h1>
       <div className="text-center p-8 m-8 bg-slate-400 bg-opacity-90 rounded-lg">
 

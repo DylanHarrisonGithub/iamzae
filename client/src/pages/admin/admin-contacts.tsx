@@ -1,5 +1,6 @@
 import React from "react";
 
+import Gallery4 from "../../components/gallery/gallery4";
 import { Contact } from "../../models/models";
 import HttpService from "../../services/http.service";
 
@@ -51,48 +52,51 @@ const AdminContacts: React.FC<any> = (props: any) => {
       <div className="text-center p-8 m-8 bg-slate-400 bg-opacity-90 rounded-lg">
 
 
-      <div className='text-center'>
-              {
-                contacts.map((c, i) => (
-                  <div 
-                    key={i} 
-                    className='inline-block cursor-pointer'
-                    onClick={() => (modalContext.modal!({prompt: `Are you sure you want to delete ${c.email}'s message?`, options: ["yes", "no"]}))!.then(res => {
-                      if (res === "yes") {
-                        HttpService.delete<void>('contactdelete', { id: c.id }).then(res => {
-                          if (res.success) {
-                            setContacts(rs => rs.filter(e => e.id !== c.id));
-                            res.messages.forEach(m => modalContext.toast!('success', m));
-                          } else {
-                            modalContext.toast!('warning', `Unable to delete ${c.email}'s message.`);
-                            res.messages.forEach(m => modalContext.toast!('warning', m));
-                          }
-                        });
-                      }
-                    }).catch(e => {})}
-                  >
-                    <ContactCard contact={{
-                      date: (new Date(parseInt(c.timestamp.toString()))).toLocaleDateString(),
-                      email: c.email,
-                      subject: c.subject,
-                      message: c.message
-                    }}/>
-                  </div>
-                ))
-              }
-              {
-                contactsBusy &&
-                <div>
-                  <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div className='text-center'>
+          <Gallery4 maxColumnWidth={288} maxColumns={6}>
+            {
+              contacts.map((c, i) => (
+                <div 
+                  key={i} 
+                  className='inline-block cursor-pointer text-left'
+                  onClick={() => (modalContext.modal!({prompt: `Are you sure you want to delete ${c.email}'s message?`, options: ["yes", "no"]}))!.then(res => {
+                    if (res === "yes") {
+                      HttpService.delete<void>('contactdelete', { id: c.id }).then(res => {
+                        if (res.success) {
+                          setContacts(rs => rs.filter(e => e.id !== c.id));
+                          res.messages.forEach(m => modalContext.toast!('success', m));
+                        } else {
+                          modalContext.toast!('warning', `Unable to delete ${c.email}'s message.`);
+                          res.messages.forEach(m => modalContext.toast!('warning', m));
+                        }
+                      });
+                    }
+                  }).catch(e => {})}
+                >
+                  <ContactCard contact={{
+                    date: (new Date(parseInt(c.timestamp.toString()))).toLocaleDateString(),
+                    email: c.email,
+                    subject: c.subject,
+                    message: c.message
+                  }}/>
                 </div>
-              }
-              {
-                !contactsBusy &&
-                <div>
-                  no more contact messages.
-                </div>
-              }
+              ))
+            }
+          </Gallery4>
+          
+          {
+            contactsBusy &&
+            <div>
+              <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             </div>
+          }
+          {
+            !contactsBusy &&
+            <div>
+              no more contact messages.
+            </div>
+          }
+        </div>
 
 
       </div>

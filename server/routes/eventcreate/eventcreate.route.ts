@@ -1,9 +1,8 @@
 import { RouterResponse } from '../../services/router/router.service';
 import { ParsedRequest } from '../../services/requestParser/requestParser.service';
-import { EventPerformance } from '../../models/models';
 import DB from '../../services/db/db.service';
 
-import { timeData } from '../../models/models';
+import { EventPerformance, timeData } from '../../models/models';
 
 
 const { periods, weekdays, months, daysPerMonth, years, dates, times } = timeData;
@@ -86,6 +85,8 @@ export default async (request: ParsedRequest<EventPerformance>): Promise<RouterR
   });
 
   if (dbRes.success) {
+
+
     return new Promise(res => res({
       code: 200,
       json: {

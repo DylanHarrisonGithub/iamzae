@@ -4,6 +4,7 @@ import requestParser from './requestParser/requestParser.service';
 import authentication from './authentication/authentication.service';
 import router from './router/router.service';
 import validation from './validation/validation.service';
+import email from './email/email.service';
 
 export type ServicePromise<T=any> = Promise<{
   success: boolean, messages: string[], body?: T
@@ -23,6 +24,7 @@ const services = ((): typeof service extends Service ? typeof service : never =>
     requestParser: requestParser,
     validation: validation,
     router: router,
+    email: email
   }
   return service;
 })();

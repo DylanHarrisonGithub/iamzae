@@ -8,6 +8,7 @@ export type ParsedRequest<T = any> = {
   timestamp: number,
   method: string,
   accepts: string,
+  host: string,
   route: string,
   token: any,
   params: T,
@@ -50,6 +51,7 @@ const requestParser = ((): typeof service extends Service ? typeof service : nev
         method: req.method,
         accepts: req.get('Accept') || '', //req.get('Accept')?.split(',').map(type => type.indexOf(';') > -1 ? type.substring(0, type.lastIndexOf(';')).split('/') : type.split('/') ) || [],
         route: route,
+        host: req.get('Host') || '',
         token: token,
         params: (req.method === 'GET' || req.method === 'DELETE') ? req.query : req.body,
         files: req.files

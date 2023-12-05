@@ -1,6 +1,11 @@
-[ ]  All strings inserted and retrieved from db require processing to escape single quote characters
-[ ]  password reset for admin accounts
-[ ]  email service
+[x]  All strings inserted and retrieved from db require processing to escape single quote characters
+[ ]  All strings used to search db should probably be escaped for single quotes as well..
+[ ]  password reset protocol with email verification for admin accounts
+[x]  email service
+[x]  admin/user accounts should have email or admin email environment variable
+[x]  admin should get email notification for contact messages and reviews
+[ ]  email list for guests to sign up and get updates about new events
+[ ]  users leaving event reviews should see a modal popup explaining their review is pending approval
 [x]  gallery component upgrade to non grid based version and column stacked media elements
 [ ]  fix video media previews are not visible on mobile safari
 [x]  music tracks admin page
@@ -11,6 +16,8 @@
 [ ]  fix month calendar on home page is off center
 [ ]  find working rich text editor for updates
 [x]  search news updates on news and admin news page
+[ ]  search reviews on admin page and view by id route
+[ ]  search contacts on admin page and view by id route
 [ ]  fix media viewer modals display aspect ratio
 [ ]  news update form input validation
 [ ]  fix event-form modal on mobile does not fit in screen
@@ -23,3 +30,4 @@
 [ ]  centralize accepted media extensions and import where needed
 [ ]  homepage latest news default alternative when there are no news updates
 [ ]  homepage reviews default alternative when there are no approved reviews
+[ ]  events and news pages should have identical title and searchbar layout and any other searchable item

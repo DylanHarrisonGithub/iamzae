@@ -7,6 +7,7 @@ import os from 'os';
 
 import server from './server/server';
 import db from './server/services/db/db.service';
+import config from './server/config/config';
 
 const app = express();
 
@@ -62,7 +63,7 @@ app.use(express.static(path.join(__dirname, 'client')));
 app.get('/*', (req, res) => res.sendFile(path.resolve(__dirname, './client', 'index.html')))
 
 app.listen(process.env.PORT || 3000, async () => {
-  console.log(`iamzae listening on port ${process.env.PORT || 3000}`);
+  console.log(`${config.APPNAME} listening on port ${config.PORT || 3000}`);
 
   // full db delete
   // for (const key of Object.keys(server.models)) {

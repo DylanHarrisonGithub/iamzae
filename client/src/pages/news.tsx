@@ -58,7 +58,7 @@ const News: React.FC<any> = (props: any) => {
         <div className='inline-block relative mx-2 my-4 align-top text-left w-11/12 md:w-4/12'>
           <div className="text-left">
             <h1 className="text-xl gold-text text-center align-middle inline-block">
-              &nbsp;&nbsp;Admin&nbsp;&nbsp;
+              &nbsp;&nbsp;News&nbsp;&nbsp;
             </h1>
           </div>
         </div>
