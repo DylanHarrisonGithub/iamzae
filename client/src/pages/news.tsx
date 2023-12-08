@@ -1,55 +1,18 @@
 import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
+import InfiniteContentScroller from "../components/infinite-content-scroller/infinite-content-scroller";
 import Update from "../components/update/update";
-
-import HttpService from "../services/http.service";
 
 import { UpdateType } from "../models/models";
 
 const News: React.FC<any> = (props: any) => {
 
+  const navigate = useNavigate();
+  const { id } = useParams();
+
   const [updates, setUpdates] = React.useState<UpdateType[]>([]);
   const [search, setSearch] = React.useState<string>('');
-  const [busy, setBusy] = React.useState<boolean>(true);
-
-  const [media, setMedia] = React.useState<string[]>([]);
-
-  const streamUpdates = async (afterID?: number) => {
-    const streamRes = await HttpService.get<UpdateType[]>('updatestream', 
-      search ? 
-        { afterID: afterID || 0, numrows: 10, search: search }
-      :
-        { afterID: afterID || 0, numrows: 10 }
-    );
-    if (streamRes.success && streamRes.body && streamRes.body.length) {
-      if (streamRes.body.length < 10) {
-        setBusy(false);
-      }
-      if (afterID) {
-        setUpdates(updates => [...updates, ...streamRes.body!.filter(sru => !updates.some(u => u.id === sru.id)) ].sort((a, b) => a.id! - b.id!));
-      } else {
-        setUpdates(streamRes.body);
-      }
-    } else {
-      setBusy(false);
-    }
-  };
-
-  React.useEffect(() => {(async () => {
-    if (busy) {
-      streamUpdates(updates.length ? updates.at(-1)?.id! : 0);
-    }
-  })();}, [updates]);
-
-  React.useEffect(() => {
-    setBusy(true);
-    streamUpdates();
-  }, []);
-
-  React.useEffect(() => {
-    setBusy(true);
-    streamUpdates();
-  }, [search]);
 
   return (
     <div className="py-16 px-4 mx-auto fan">
@@ -75,22 +38,28 @@ const News: React.FC<any> = (props: any) => {
 
       </div>
 
+      {
+        (id !== undefined) &&
+          <div className="flex">
+            <button 
+              className="btn btn-circle btn-lg ml-auto"
+              onClick={() => navigate('/admin/reviews')}
+            >
+              Close
+            </button>
+          </div>
+      }
+
       <div className="p-1 m-3 rounded-lg glass">
-        <p className="text-white ml-8 mt-8 mb-4">Updates</p>
-        {
-          updates.map((u, i) => (<Update key={i} update={u} />))
-        }
-        {
-          busy &&
-            <div className="text-center">
-              <div className="lds-roller mx-auto"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-            </div>
-        }  
+        <InfiniteContentScroller<UpdateType> contentStreamingRoute={'updatestream'} content={updates} contentSetter={setUpdates} search={search} id={id}>
+          {
+            updates.map((u, i) => (<Update key={i} update={u} />))
+          }
+        </InfiniteContentScroller>
       </div>
 
-
     </div>
-  )
+  );
 }
 
 export default News;

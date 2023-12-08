@@ -68,7 +68,7 @@ const EventsComponent: React.FC<EventComponentProps> = ({events, mediaList, setE
 
       // Clean-up
       return () => {
-       window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("scroll", onScroll);
       };
   }, [events]);
 

@@ -5,6 +5,7 @@ import ValidationService, { Schema, Model } from '../../services/validation.serv
 export type QuickFormSchemaMetaType = {
   [key: string]: any,
   quickForm?: {
+    //textArea?: boolean, textAreaColumns?: number, textAreaRows?: number,  TODO
     containerClassName?: string,
     labelClassName?: string,
     inputClassName?: string
@@ -52,7 +53,7 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
       (schema[key].type as string).includes('string')) ||
       (schema[key].type instanceof RegExp)
     ) {
-      return (
+      return (  //TODO optionally input or textarea element if schema[key].attributes?.meta?.quickForm?.textArea === true
         <input
           ref={element => refs.current[key] = element}
           className={

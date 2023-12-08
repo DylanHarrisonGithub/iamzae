@@ -119,6 +119,7 @@ function App() {
               <Route path="admin/reviews" element={<AdminReviews/>} />
               <Route path="admin/reviews/:id" element={<AdminReviews/>} />
               <Route path="admin/contacts" element={<AdminContacts/>} />
+              <Route path="admin/contacts/:id" element={<AdminContacts/>} />
               <Route path="admin/news" element={<AdminNews/>} />
               <Route path="*" element={<NoPage />} />
             </Routes>

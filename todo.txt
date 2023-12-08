@@ -13,11 +13,20 @@
 [x]  music tracks upload, delete
 [x]  music visualization
 [x]  listen page
-[ ]  fix month calendar on home page is off center
+[ ]  fix month calendar on home page is off center on mobile when there are no events for current month
 [ ]  find working rich text editor for updates
 [x]  search news updates on news and admin news page
-[ ]  search reviews on admin page and view by id route
-[ ]  search contacts on admin page and view by id route
+[x]  search reviews on admin-reviews page and view by id route
+[x]  search contacts on admin-contacts page and view by id route
+[x]  search news on page and view by id route
+[x]  search admin-news on page and view by id route
+[x]  implement admin-review infinite-scroll-until-no-more effect
+[x]  implement admin-contacts infinite-scroll-until-no-more effect
+[x]  implement admin-news infinite-scroll-until-no-more effect
+[x]  implement admin-news page infinite-scroll-until-no-more effect
+[x]  implement news page infinite-scroll-until-no-more effect
+[ ]  fix news updatestream search is not retrieving accurate search results
+[ ]  news updates should be retrieved in order sorted by date, not by id
 [ ]  fix media viewer modals display aspect ratio
 [ ]  news update form input validation
 [ ]  fix event-form modal on mobile does not fit in screen
@@ -27,7 +36,17 @@
 [ ]  delete media and track route is returning success message even if file does not exist
 [ ]  media used in static fixed elements in site should not be kept in the media folder or be deleteable
 [ ]  lazy loading for images and videos
-[ ]  centralize accepted media extensions and import where needed
+[x]  centralize accepted media extensions and import where needed
 [ ]  homepage latest news default alternative when there are no news updates
 [ ]  homepage reviews default alternative when there are no approved reviews
-[ ]  events and news pages should have identical title and searchbar layout and any other searchable item
+[ ]  events and news pages should have consistent title and searchbar layout as well as any other searchable item pages
+[ ]  events page calendar year should be changeable
+[ ]  identify and fix low/poor contrast foreground-background visual elements
+[x]  fix admin-review approve and delete buttons misaligned
+[ ]  quick-form option for string values to be textareas instead of inputs with column and width specificity
+[ ]  combine quick-forms with masonry layout and see if viable option for responsive forms
+[ ]  events model should have field(s) for physical location addresses
+[ ]  event reviews should have better/seperate system for approved vs featured status
+[ ]  events page, clicking on a month, but not a specific date, should select event search results for the whole month
+[x]  generalized content infinite scroll component
+[ ]  client and server config keyvalues to set verbosity level of logging 

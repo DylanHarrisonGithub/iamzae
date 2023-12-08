@@ -14,7 +14,15 @@ export const ModalContext = React.createContext<{
 }>({
   toast: null,
   modal: null
-}); 
+});
+
+const statusClass = {
+  alert: "alert-info",
+  error: "alert-error",
+  info: "alert-info",
+  success: "alert-success",
+  warning: "alert-warning"
+}
 
 const Modal: React.FC<ModalProps> = (props: ModalProps) => {
 
@@ -140,7 +148,7 @@ const Modal: React.FC<ModalProps> = (props: ModalProps) => {
 
         {
           toasts.map((t, i) => (
-            <div className={`alert alert-${t.status} shadow-lg p-1 my-2 hover:cursor-pointer`} key={i} onClick={() => dismissToast(t.id)}>
+            <div className={`alert shadow-lg p-1 my-2 hover:cursor-pointer ${statusClass[t.status]}`} key={i} onClick={() => dismissToast(t.id)}>
               <div>
                 <svg className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
                   d={toastSVG(t.status)} 

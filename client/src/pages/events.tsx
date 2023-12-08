@@ -30,7 +30,7 @@ const Events: React.FC<any> = () => {
   const storageContext = React.useContext(StorageContext);
 
   const [derivedEvents, setDerivedEvents] = React.useState<EventPerformance[]>([]);
-  const [decodedEvent, setDecodedEvent] = React.useState<EventPerformance | undefined>()
+  const [decodedEvent, setDecodedEvent] = React.useState<EventPerformance | undefined>();
   const [eventReviews, setEventReviews] = React.useState<Review[]>([]);
   const [eventsCalendarMonth, setEventsCalendarMonth] = React.useState<typeof months[number]>(months[(new Date()).getMonth()]);
   const [eventsCalendarYear, setEventsCalendarYear] = React.useState<number>((new Date()).getFullYear());
