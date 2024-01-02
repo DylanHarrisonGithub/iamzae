@@ -15,7 +15,7 @@ export default async (request: ParsedRequest<{
   id?: string
 }>): Promise<RouterResponse> => {
 
-  const { afterID, numrows, search, id } = request.params;
+  const { afterID, numrows, search, id } = { ...request.params, search: request.params.search?.replace(/'/g, `''`) };
 
   // attempt format date and date-like searches to standard [monthname]/[dd]/[yyyy] or [monthname]/[yyyy]
   let mappedSearch = search; 

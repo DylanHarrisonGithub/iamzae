@@ -51,6 +51,7 @@ const ReviewForm: React.FC<{ eventID: number }> = ({ eventID }) => {
 
     const res = await HttpService.post<void>('reviewcreate', { event: eventID, name: reviewerName, stars: rating, text: reviewText });
     modalContext.toast!(res.success ? 'success' : 'error', res.messages[0]);
+    res.success && modalContext.modal!({ prompt: 'Thank you for your feedback! Your review has been submitted and is pending approval.', options: ['Ok']})
 
   };
 

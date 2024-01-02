@@ -35,6 +35,12 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, onDayClick, highlights
   const [internalYear, setInternalYear] = React.useState(year);
   const [internalMonth, setInternalMonth] = React.useState(month);
 
+  React.useEffect(() => {
+    setInternalMonth(month);
+    setInternalYear(year);
+    setCalendarDays(generateCalendarDays(year, month));
+  }, [year, month]);
+
   const handleDayClick = (day: number) => {
     if (day !== 0 && onDayClick) {
       onDayClick(day, internalMonth, internalYear);

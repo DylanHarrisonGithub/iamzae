@@ -61,10 +61,12 @@ const InfiniteContentScroller = <T extends { id: number }>({
       if (streamRes.body.length < 10) {
         setComplete(true);
       }
-      if (afterID) {
-        setContent(content => [...content, ...streamRes.body!.filter(src => !content.some(u => u.id === src.id)) ].sort((a, b) => a.id! - b.id!));
-      } else {
-        setContent(streamRes.body);
+      if (streamRes.body.length) {
+        if (afterID) {
+          setContent(content => [...content, ...streamRes.body!.filter(src => !content.some(u => u.id === src.id)) ].sort((a, b) => a.id! - b.id!));
+        } else {
+          setContent(streamRes.body);
+        }
       }
       [
         `GET request to ${contentStreamingRoute} successful.`,
@@ -75,6 +77,7 @@ const InfiniteContentScroller = <T extends { id: number }>({
         `GET request to ${contentStreamingRoute} failed.`,
         ...streamRes.messages || []
       ].forEach(m => modalContext.toast!('warning', m));
+      setComplete(true);
       setBusy(false);
     }
     setBusy(false);

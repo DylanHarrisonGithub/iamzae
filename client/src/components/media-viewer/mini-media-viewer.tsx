@@ -28,22 +28,27 @@ const MiniMediaViewer: React.FC<any> = ({ filename }) => {
           >
           </img>
         :
-          <video
-            className="inline-block"
-            width={64} 
-            height={64} 
-            src={
-              (
-                filename.toUpperCase().startsWith('HTTP://') ||
-                filename.toUpperCase().startsWith('HTTPS://') ||
-                filename.toUpperCase().startsWith('www.')
-              ) ?
-                filename
-              :
-                config.ASSETS[config.ENVIRONMENT] + `media/${filename}`
-            }
-            controls={true} autoPlay={false} muted={true} loop={true}
-          ></video>
+          (
+            filename.toUpperCase().startsWith('HTTP://') ||
+            filename.toUpperCase().startsWith('HTTPS://') ||
+            filename.toUpperCase().startsWith('www.')
+          ) ?  
+            <iframe 
+              className="inline-block"
+              width={64} 
+              height={64} 
+              src={filename} 
+
+            ></iframe>
+          :
+            <video
+              // style={{height: window.innerHeight-100}}
+              className="inline-block"
+              width={64} 
+              height={64} 
+              src={config.ASSETS[config.ENVIRONMENT] + `media/${filename}`}
+              controls={true} autoPlay={false} muted={true} loop={true}
+            ></video>
       }
     </div>
   )

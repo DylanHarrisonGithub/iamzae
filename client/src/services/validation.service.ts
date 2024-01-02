@@ -16,8 +16,8 @@ export type Schema<T=undefined> = {
       strLength?: { minLength?: number, maxLength?: number },
       tests?: ((inputRoot: any, input: any, key?: string) => { success: boolean, message?: string })[],
       default?: any,
-      meta?: T
-    }
+    },
+    meta?: T
   }
 }
 

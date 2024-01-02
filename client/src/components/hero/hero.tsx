@@ -22,7 +22,7 @@ const Hero: React.FC<HeroProps> = (props: HeroProps) => {
       className={`relative w-full min-h-screen flex justify-center items-center ${props.svg ? props.svg : `bg-cover bg-center`}`} 
       style={
         props.image ?
-        { backgroundImage: `url("${config.ASSETS[config.ENVIRONMENT]}media/${props.image}` }
+        { backgroundImage: `url("${config.ASSETS[config.ENVIRONMENT]}static/${props.image}` }
       :
         undefined
 
@@ -32,7 +32,7 @@ const Hero: React.FC<HeroProps> = (props: HeroProps) => {
         props.video && (
           <video 
             className="min-w-full h-screen absolute object-cover"
-            src={`${config.ASSETS[config.ENVIRONMENT]}media/${props.video}`}
+            src={`${config.ASSETS[config.ENVIRONMENT]}static/${props.video}`}
             autoPlay={true} muted={true} loop={true}
           >
           </video>

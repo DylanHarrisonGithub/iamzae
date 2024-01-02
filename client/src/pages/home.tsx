@@ -64,7 +64,7 @@ const Home: React.FC<any> = (props: any) => {
       <Hero translateY={-8}>
         <div className="w-full bg-white bg-opacity-75 rounded-lg text-center">
         <div className="text-lg font-extrabold mt-7 ml-8 text-left">{months[(new Date()).getMonth()]} events <div className="float-right inline-block mr-8 text-blue-600 dark:text-blue-500 hover:underline"><Link to={`/events`}>Browse All</Link></div></div>
-          <div className="inline-block align-top ">
+          <div className="inline-block align-top">
             <EventsCalendar year={(new Date()).getFullYear()} events={storageContext.events as EventPerformance[] || []} displayMonths={[months[(new Date()).getMonth()]]}/>
           </div>
           <div className="inline-block mt-8 align-top p-2">
@@ -74,7 +74,7 @@ const Home: React.FC<any> = (props: any) => {
                 derivedEvents.filter(e => e.month === months[(new Date()).getMonth()]).map((event, index) => (
                   <div
                     key={index} 
-                    className="cursor-pointer hover:p-1 hover:bg-white"
+                    className="cursor-pointer hover:p-1 hover:bg-white w-[40rem]"
                     //onClick={() => navigate(`/events/${event.id}`)}
                     onClick={() => navigate(`/events/${btoa(JSON.stringify(event))}`)}
                   >

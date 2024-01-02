@@ -6,6 +6,11 @@ import Gallery from '../gallery/gallery';
 import config from '../../config/config';
 import Gallery2 from '../gallery/gallery2';
 import Gallery3 from '../gallery/gallery3';
+import Gallery4 from '../gallery/gallery4';
+
+import MediaViewer from '../media-viewer/media-viewer';
+
+import { acceptedMediaExtensions } from '../../models/models';
 
 type Props = {
   media: string[],
@@ -13,10 +18,6 @@ type Props = {
   resolve: (associatedMedia: string[] | null) => any
 };
 
-const acceptedMedia = [
-  'gif', 'jpg', 'jpeg', 'png',
-  'mov', 'mp4', 'mpeg', 'webm', 'ogg'
-];
 
 const EventMediaForm: React.FC<Props> = ({ media, associatedMedia, resolve }) => {
 
@@ -47,10 +48,13 @@ const EventMediaForm: React.FC<Props> = ({ media, associatedMedia, resolve }) =>
         >Accept</button>
       </div>
       <div className='w-[400px] md:w-[600] max-h-96 overflow-y-auto mt-2'>
-        <Gallery title="Media">
+        <Gallery4 maxColumnWidth={100}>
           {
             [...media, ...selectedMedia.filter(sm => !media.includes(sm))].map(a => (
-              <span key={a} className="relative">
+              <div 
+                key={a} 
+                className="relative m-1 hover:cursor-pointer"
+              >
                 {
                   selectedMedia.includes(a) &&
                   <p 
@@ -62,10 +66,10 @@ const EventMediaForm: React.FC<Props> = ({ media, associatedMedia, resolve }) =>
                   </p>
                 }
                 {
-                  acceptedMedia.slice(0, 4).filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
+                  acceptedMediaExtensions.image.filter(accepted => a.toLowerCase().endsWith(accepted)).length ?
                     <img 
-                      className="inline-block cursor-pointer" 
-
+                      // style={{height: window.innerHeight-100}}
+                      // height={ window.innerHeight - 100 }
                       src={
                         (
                           a.toUpperCase().startsWith('HTTP://') ||
@@ -80,27 +84,33 @@ const EventMediaForm: React.FC<Props> = ({ media, associatedMedia, resolve }) =>
                     >
                     </img>
                   :
-                    <video
-                      className='inline-block cursor-pointer'
+                    (
+                      a.toUpperCase().startsWith('HTTP://') ||
+                      a.toUpperCase().startsWith('HTTPS://') ||
+                      a.toUpperCase().startsWith('www.')
+                    ) ?
+                      <div
+                        onClick={() => setSelectedMedia(selectedMedia.includes(a) ? selectedMedia.filter(sm => sm !== a) : [...selectedMedia, a])}
+                      >
+                        <iframe 
+                          className=" w-full h-auto pointer-events-none"
+                          src={a}
 
-                      src={
-                        (
-                          a.toUpperCase().startsWith('HTTP://') ||
-                          a.toUpperCase().startsWith('HTTPS://') ||
-                          a.toUpperCase().startsWith('www.')
-                        ) ?
-                          a
-                        :
-                          config.ASSETS[config.ENVIRONMENT] + `media/${a}`
-                      }
-                      autoPlay={false} muted={true} loop={true}
-                      onClick={() => setSelectedMedia(selectedMedia.includes(a) ? selectedMedia.filter(sm => sm !== a) : [...selectedMedia, a])}
-                    ></video>
+                        ></iframe>
+                      </div>  
+
+                    :
+                      <video
+                        // style={{height: window.innerHeight-100}}
+                        src={config.ASSETS[config.ENVIRONMENT] + `media/${a}`}
+                        autoPlay={false} muted={true} loop={true}
+                        onClick={() => setSelectedMedia(selectedMedia.includes(a) ? selectedMedia.filter(sm => sm !== a) : [...selectedMedia, a])}
+                      ></video>
                 }
-              </span>
+              </div>
             ))
           }
-        </Gallery>
+        </Gallery4>
       </div>
     </span>
   );

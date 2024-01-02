@@ -39,10 +39,10 @@ const EventsCalendar: React.FC<EventsCalendarProps> = ({year, events, onscroll, 
 
   React.useEffect(() => {
     (async () => {
-      const cds = (await EventService.generateEventCalendar(events)).body!;
+      const cds = (await EventService.generateEventCalendar(events.filter(ev => ev.year.toString() === year.toString()))).body!;
       setCalendarDays(cds);
     })();
-  }, [events]);
+  }, [events, year]);
 
   return (
     (display && display === "GALLERY") ?

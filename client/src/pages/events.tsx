@@ -53,25 +53,45 @@ const Events: React.FC<any> = () => {
         <div className="py-8 sm:w-[600px] md:w-[800px] lg:w-[1200px]">
           {
             !decodedEvent &&
-            <div className="lg:flex mx-5">
-              <div className="block lg:inline-block my-4 pt-4">
-                <span className="text-xl gold-text text-center align-middle">
-                  &nbsp;&nbsp;Events Calendar&nbsp;&nbsp;
-                </span>
+              <div className="text-center p-1 m-3 mt-4">
+                <div className='inline-block relative mx-2 my-4 align-top text-left w-11/12 md:w-4/12'>
+                  <div className="text-left">
+                    <h1 className="text-xl gold-text text-center align-middle inline-block">
+                      &nbsp;&nbsp;Events Calendar&nbsp;&nbsp;
+                    </h1>
+                  </div>
+                </div>
+
+                <div className='inline-block relative mx-2 my-3 w-11/12 md:w-5/12 text-left'>
+                  <input
+                    className="bg-gray-200 text-left md:text-right appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                    type="text"
+                    placeholder="Search Events"
+                    value={searchParams.get('search') || ''}
+                    onInput={(event: React.ChangeEvent<HTMLInputElement>) => setSearchParams(event.target.value.length ? {search: event.target.value} : {})}
+                  />
+                </div>
               </div>
-              <input 
-                className={`bg-gray-300 text-right appearance-none border-2 border-gray-600 rounded block w-full lg:w-2/3 py-4 my-4 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500 ml-auto`} 
-                type="text"
-                placeholder="Search Events"
-                value={searchParams.get('search') || ''} 
-                onInput={(event: React.ChangeEvent<HTMLInputElement>) => setSearchParams(event.target.value.length ? {search: event.target.value} : {})}
-              />
-            </div>
           }
 
           {
             !(searchParams.get('search') || encodedEvent) &&
-              <EventsCalendar year={(new Date()).getFullYear()} events={derivedEvents || []}/>
+              <div>
+                <div
+                  className="inline-block bg-white rounded-lg ml-5 mb-0"
+                >
+                  <button 
+                    className="btn btn-accent mr-4"
+                    onClick={() => setEventsCalendarYear(y => (y + 2999) % 3000)}
+                  >&lt;</button>
+                  {eventsCalendarYear}
+                  <button 
+                    className="btn btn-accent ml-4"
+                    onClick={() => setEventsCalendarYear(y => (y + 3001) % 3000)}
+                  >&gt;</button>
+                </div>
+                <EventsCalendar year={eventsCalendarYear} events={derivedEvents || []}/>
+              </div>
           }
             <h1 className="text-white mx-8">{ 
               searchParams.get('search') ? 

@@ -1,7 +1,7 @@
 import React from "react";
 
 type Gallery4Props = {
-  children?: React.ReactNode[],
+  children?: React.ReactNode[],  // children should also possibly be a single react node
   minColumnWidth?: number,      // is it worth it to implement columns may stretch between min and max colwidth??
   maxColumnWidth?: number,
   maxColumns?: number
@@ -22,7 +22,7 @@ const Gallery4: React.FC<Gallery4Props> = ({ children, minColumnWidth = 400, max
 
   React.useEffect(() => {
     if (containerRef.current) {
-      let numColumns = Math.min(Math.floor((containerRef.current?.clientWidth || 0) / maxColumnWidth), maxColumns);
+      let numColumns = Math.max(1, Math.min(Math.floor((containerRef.current?.clientWidth || 0) / (maxColumnWidth+2)), maxColumns));
       const tempColumns: React.ReactNode[][] = [...Array(numColumns).keys()].map(i => []);
       children?.forEach((c, i) => {
         tempColumns[i % numColumns].push(c);
@@ -34,7 +34,7 @@ const Gallery4: React.FC<Gallery4Props> = ({ children, minColumnWidth = 400, max
   return (
 
     <div 
-      className="mx-auto p-1 md:p-4 lg:p-8 text-center"
+      className="mx-auto p-1 text-center"
       ref={containerRef}
     >
       {/* <p className="text-white">{containerWidth}, {columns.length}</p> */}

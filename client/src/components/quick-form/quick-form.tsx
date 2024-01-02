@@ -1,28 +1,37 @@
-import React, { ReactElement } from 'react';
+import React, { HTMLInputTypeAttribute, InputHTMLAttributes, ReactElement } from 'react';
 
 import ValidationService, { Schema, Model } from '../../services/validation.service';
+
+import { acceptedMediaExtensions } from '../../models/models';
 
 export type QuickFormSchemaMetaType = {
   [key: string]: any,
   quickForm?: {
-    //textArea?: boolean, textAreaColumns?: number, textAreaRows?: number,  TODO
-    containerClassName?: string,
+    textArea?: boolean, textAreaColumns?: number, textAreaRows?: number,
+    label?: string,
+    placeholder?: string,
+    hideErrorMessages?: boolean,
+    CustomInput?: React.FC<InputHTMLAttributes<any> & React.ClassAttributes<any>>
+    customInputProps?: any,
+    containerClassName?: string,  // should these classnames be props of quickform instead?
     labelClassName?: string,
-    inputClassName?: string
+    inputClassName?: string,
+    errrorClassName?: string,
   }
 }
 
 type Props<T=Model> = {
   schema: Schema<QuickFormSchemaMetaType>,
   onInput: (errors: string[], model: T) => void,
+  labelPlacement?: "left" | "above" | "none",
   _parentKey?: string
 };
 
-const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactElement => {
+const QuickForm = <T=Model>({schema, onInput, labelPlacement="above", _parentKey}: Props<T>): ReactElement => {
 
   const [model, setModel] = React.useState<Model>(ValidationService.instantiateSchema(schema));
   const [errors, setErrors] = React.useState<{ [key: string]: string[] }>({});
-  const refs = React.useRef<{[key:string]: HTMLInputElement | HTMLSelectElement | null}>({}); //Object.keys(schema).reduce((refObj, key) => ({...refObj, [key]: React.useRef(null)}), {});
+  const refs = React.useRef<{[key:string]: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null}>({}); //Object.keys(schema).reduce((refObj, key) => ({...refObj, [key]: React.useRef(null)}), {});
 
   React.useEffect(() => {
     (async () => {
@@ -42,25 +51,79 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
     })();
   }, [model]);
 
+  React.useEffect(() => {
+    setModel(ValidationService.instantiateSchema(schema));
+  }, [schema]);
+
   const renderLeaf: (...args: any[]) => React.ReactNode = (
     model: Model, 
     schema: Schema<QuickFormSchemaMetaType>, 
     key: string,
     i?: number
   ) => {
+
+    if (schema[key].meta?.quickForm?.CustomInput) {
+      let Generic = schema[key].meta!.quickForm!.CustomInput!;
+      return (
+        <Generic 
+          // ref={element => refs.current[key] = element}
+          className={
+            (Object.keys(errors).includes(key) ? 'textarea-error ' : "textarea-success ") +
+            (schema[key].meta?.quickForm?.inputClassName || "w-full")
+          }
+          placeholder={schema[key].meta?.quickForm?.placeholder || key}
+          name={typeof i === 'undefined' ? key : key + i}
+          value={typeof i === 'undefined' ? model[key] as string : (model[key] as Array<string>)[i] as string}
+          onChange={
+            (e: React.ChangeEvent<any>) => setModel(m => 
+              typeof i === 'undefined' ?
+                ({...m, [key]: e.target.value})
+              :
+                ({...m, [key]: (model[key] as Array<any>).map((element,j) => j === i ? e.target.value : element)})
+            ) 
+          }
+          { ...schema[key].meta?.quickForm?.customInputProps }
+        />
+      );
+    }
+
     if (
       (typeof schema[key].type === 'string' &&
       (schema[key].type as string).includes('string')) ||
       (schema[key].type instanceof RegExp)
     ) {
-      return (  //TODO optionally input or textarea element if schema[key].attributes?.meta?.quickForm?.textArea === true
+      if (schema[key].meta?.quickForm?.textArea === true) {
+        return (
+          <textarea
+            ref={element => refs.current[key] = element}
+            className={
+              (Object.keys(errors).includes(key) ? 'textarea-error ' : "textarea-success ") +
+              (schema[key].meta?.quickForm?.inputClassName || "textarea textarea-bordered resize-none w-full")
+            }
+            placeholder={schema[key].meta?.quickForm?.placeholder || key}
+            rows={schema[key].meta?.quickForm?.textAreaRows || 4}
+            name={typeof i === 'undefined' ? key : key + i}
+            value={typeof i === 'undefined' ? model[key] as string : (model[key] as Array<string>)[i] as string}
+            onChange={
+              (e: React.ChangeEvent<HTMLTextAreaElement>) => setModel(m => 
+                typeof i === 'undefined' ?
+                  ({...m, [key]: e.target.value})
+                :
+                  ({...m, [key]: (model[key] as Array<any>).map((element,j) => j === i ? e.target.value : element)})
+              ) 
+            }
+          />
+        );
+      }
+      return (  
         <input
           ref={element => refs.current[key] = element}
           className={
             (Object.keys(errors).includes(key) ? 'input-error ' : "input-success ") +
-            (schema[key].attributes?.meta?.quickForm?.inputClassName || "ml-3 input input-bordered")
+            (schema[key].meta?.quickForm?.inputClassName || "input input-bordered w-full")
           }
           type="text"
+          placeholder={schema[key].meta?.quickForm?.placeholder || key}
           name={typeof i === 'undefined' ? key : key + i}
           value={typeof i === 'undefined' ? model[key] as string : (model[key] as Array<string>)[i] as string}
           onChange={
@@ -80,16 +143,21 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
       return (
         <input
           ref={element => refs.current[key] = element}
-          className={schema[key].attributes?.meta?.quickForm?.inputClassName || "ml-3 input input-bordered"}
-          type="number"
+          className={
+            (Object.keys(errors).includes(key) ? 'input-error ' : "input-success ") +
+            (schema[key].meta?.quickForm?.inputClassName || "input input-bordered w-full")
+          }
+          type="text"
+          pattern='[0-9.,]+'
+          placeholder={schema[key].meta?.quickForm?.placeholder || key}
           name={typeof i === 'undefined' ? key : key + i}
           value={typeof i === 'undefined' ? model[key] as string : (model[key] as Array<string>)[i] as string}
           onChange={ 
             (e: React.ChangeEvent<HTMLInputElement>) => setModel(m => 
               typeof i === 'undefined' ?
-                ({...m, [key]: parseFloat(e.target.value)})
+                ({...m, [key]: parseFloat(e.target.value) || ''})
               :
-                ({...m, [key]: (model[key] as Array<any>).map((element,j) => j === i ? parseFloat(e.target.value) : element)})
+                ({...m, [key]: (model[key] as Array<any>).map((element,j) => j === i ? (parseFloat(e.target.value) || '') : element)})
             ) 
           }
         />
@@ -99,27 +167,49 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
       (schema[key].type as string).includes('boolean'))
     ) {
       return (
-        <input
-          ref={element => refs.current[key] = element}
-          className={schema[key].attributes?.meta?.quickForm?.inputClassName || "ml-3 input input-bordered"}
-          type="checkbox"
-          name={typeof i === 'undefined' ? key : key + i}
-          checked={typeof i === 'undefined' ? model[key] as boolean : (model[key] as Array<boolean>)[i] as boolean}
-          onChange={ 
-            (e: React.ChangeEvent<HTMLInputElement>) => setModel(m => 
-              typeof i === 'undefined' ? 
-                ({...m, [key]: !model[key] })
-              :
-                ({...m, [key]: (model[key] as Array<any>).map((element,j) => j === i ? !element : element)})
-            ) 
+        <div className='flex items-center'>
+          { // checkbox label omission is not allowed
+            (labelPlacement !== "left") && (
+              <label
+                className={
+
+                  (schema[key].meta?.quickForm?.labelClassName || "pr-4")
+                }
+              >
+                { schema[key].meta?.quickForm?.placeholder || key }
+              </label>
+            )
           }
-        />
+          <input
+            ref={element => refs.current[key] = element}
+            className={
+              (Object.keys(errors).includes(key) ? 'checkbox-error ' : "checkbox-success ") +
+              (schema[key].meta?.quickForm?.inputClassName || "checkbox")
+            }
+            type="checkbox"
+            name={typeof i === 'undefined' ? key : key + i}
+            checked={typeof i === 'undefined' ? model[key] as boolean : (model[key] as Array<boolean>)[i] as boolean}
+            onChange={ 
+              (e: React.ChangeEvent<HTMLInputElement>) => setModel(m => 
+                typeof i === 'undefined' ? 
+                  ({...m, [key]: !model[key] })
+                :
+                  ({...m, [key]: (model[key] as Array<any>).map((element,j) => j === i ? !element : element)})
+              ) 
+            }
+          />
+        </div>
       );
     } else if (Array.isArray(schema[key].type)) {
       return (
         <select
+          className={
+            (Object.keys(errors).includes(key) ? 'select-error ' : "select-success ") +
+            (schema[key].meta?.quickForm?.inputClassName || "select select-bordered w-full invalid:text-gray-500")
+          }
           ref={element => refs.current[key] = element}
-          value={typeof i === 'undefined' ? model[key] as string : (model[key] as Array<string>)[i] as string}
+          //value={typeof i === 'undefined' ? model[key] as string : (model[key] as Array<string>)[i] as string}
+          defaultValue={key}
           name={typeof i === 'undefined' ? key : key + i}
           onChange={ 
             (e: React.ChangeEvent<HTMLSelectElement>) => setModel(m => 
@@ -131,7 +221,10 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
           }
         >
           {
-            ((schema[key].type as string[]).map(option => <option value={option}>{option}</option>))
+            [
+              (<option key={'default' + key} value={key} disabled={true}>{schema[key].meta?.quickForm?.placeholder || key}</option>),
+              ...((schema[key].type as string[]).map((option, i) => <option key={key + option + i} value={option}>{option}</option>))
+            ]
           }
         </select>
       );
@@ -140,7 +233,7 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
   }
 
   return (
-    <table className={"table-auto"}>
+    <table className={"table-auto w-full"}>
       {
         Object.keys(model).map((key: string): React.ReactNode => {
           if (Array.isArray(model[key])) {
@@ -148,17 +241,30 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
               return (
                 <tbody 
                   key={(_parentKey || "") + key} 
-                  className={schema[key].attributes?.meta?.quickForm?.containerClassName || "border-solid border-2 rounded"}
+                  className={schema[key].meta?.quickForm?.containerClassName || ""}
                 >
                   <tr key={(_parentKey || "") + key + "label"}>
-                    <td>
-                      <label
-                        className={schema[key].attributes?.meta?.quickForm?.labelClassName || ""}
-                      >
-                        {key}
-                      </label>
+                    <td className='align-top'>
+                      {
+                        (labelPlacement === "left") && (
+                          <label
+                            className={schema[key].meta?.quickForm?.labelClassName || "pr-4"}
+                          >
+                            {key}
+                          </label>
+                        )
+                      }
                     </td>
-                    <td>
+                    <td className='w-full'>
+                      {
+                        (labelPlacement === "above") && (
+                          <label
+                            className={schema[key].meta?.quickForm?.labelClassName || "pr-4"}
+                          >
+                            {key}
+                          </label>
+                        )
+                      }
                       {
                         (model[key] as Array<any>).map((f, i) => (
                           <QuickForm<Model>
@@ -204,17 +310,36 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
               );
             } else {
               return (
-                <tbody key={(_parentKey || "") + key} className={schema[key].attributes?.meta?.quickForm?.containerClassName || "border-solid border-2 rounded"}>
-                  <tr key={(_parentKey || "") + key + "label"}>
-                    <td><label>{key}</label></td>
-                    <td>
-                      <table className='table-auto'>
-                        <tbody className="border-solid border2 rounded">
+                <tbody key={(_parentKey || "") + key} className={schema[key].meta?.quickForm?.containerClassName || ""}>
+                  <tr key={(_parentKey || "") + key + "label"} className=''>
+                    <td className='align-top'>
+                      {
+                        (labelPlacement === "left") && (
+                          <label
+                            className={schema[key].meta?.quickForm?.labelClassName || "pr-4"}
+                          >
+                            {key}
+                          </label>
+                        )
+                      }
+                    </td>
+                    <td className='w-full'>
+                      {
+                        (labelPlacement === "above") && (
+                          <label
+                            className={schema[key].meta?.quickForm?.labelClassName || "pr-4"}
+                          >
+                            {key}
+                          </label>
+                        )
+                      }
+                      <table className='table-auto w-full'>
+                        <tbody className=""> {/* figure out how this is supposed to be styled */}
                           {
                             (model[key] as Array<any>).map((f, i) => (
-                              <tr key={(_parentKey || "") + key + i.toString()} className="ml-3">
-                                <td><label className={schema[key].attributes?.meta?.quickForm?.labelClassName || ""}>{i}</label></td>
-                                <td>
+                              <tr key={(_parentKey || "") + key + i.toString()} className="">
+                                <td><label className={schema[key].meta?.quickForm?.labelClassName || "pr-4"}>{i}</label></td>
+                                <td className='w-full'>
                                   {/* <input
                                     className={schema[key].attributes?.meta?.quickForm?.inputClassName || "ml-3 input input-bordered"}
                                     type="text"
@@ -252,10 +377,29 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
           } else {
             if (typeof model[key] === 'object') {
               return (
-                <tbody key={(_parentKey || "") + key} className={schema[key].attributes?.meta?.quickForm?.containerClassName || "border-solid border-2 rounded"}>
+                <tbody key={(_parentKey || "") + key} className={schema[key].meta?.quickForm?.containerClassName || ""}>
                   <tr>
-                    <td><label >{key}</label></td>
-                    <td>
+                    <td className='align-top'>
+                      {
+                        (labelPlacement === "left") && (
+                          <label
+                            className={schema[key].meta?.quickForm?.labelClassName || "pr-4"}
+                          >
+                            {key}
+                          </label>
+                        )
+                      }
+                    </td>
+                    <td className='w-full'>
+                      {
+                        (labelPlacement === "above") && (
+                          <label
+                            className={schema[key].meta?.quickForm?.labelClassName || "pr-4"}
+                          >
+                            {key}
+                          </label>
+                        )
+                      }
                       <QuickForm<Model>
                         schema={schema[key].type as Schema<QuickFormSchemaMetaType>} 
                         onInput={ (v, m) => setModel({...model, [key]: m}) }
@@ -267,27 +411,51 @@ const QuickForm = <T=Model>({schema, onInput, _parentKey}: Props<T>): ReactEleme
               );
             } else {
               return (
-                <tbody key={(_parentKey || "") + key} className={schema[key].attributes?.meta?.quickForm?.containerClassName || "border-solid border-2 rounded"}>
+                <tbody key={(_parentKey || "") + key} className={schema[key].meta?.quickForm?.containerClassName || ""}>
                   <tr
-                    className={schema[key].attributes?.meta?.quickForm?.containerClassName || ""}
+                    className={schema[key].meta?.quickForm?.containerClassName || ""}
                   >
-                    <td><label className={schema[key].attributes?.meta?.quickForm?.labelClassName || ""}>{key}</label></td>
-                    <td>{ renderLeaf(model, schema, key) }</td>
+                    <td className='align-top'>
+                      {
+                        (labelPlacement === "left") && (
+                          <label
+                            className={schema[key].meta?.quickForm?.labelClassName || "pr-4"}
+                          >
+                            {key}
+                          </label>
+                        )
+                      }
+                    </td>
+                    <td className='w-full text-left'>
+                      {
+                        (labelPlacement === "above") && (
+                          <label
+                            className={schema[key].meta?.quickForm?.labelClassName || "p-2"}
+                          >
+                            {key}
+                          </label>
+                        )
+                      }
+                      { renderLeaf(model, schema, key) }
+                    </td>
                   </tr>
                   {
-                    (Object.keys(errors).includes(key) && (document.activeElement === refs.current[key])) && ( // only show errors for active element to keep form cleaner
+                    (!(schema[key].meta?.quickForm?.hideErrorMessages) && Object.keys(errors).includes(key) && (document.activeElement === refs.current[key])) && ( // only show errors for active element to keep form cleaner
                       <tr>
                         <td colSpan={2}>
                           <table className='w-full'>
                             <tbody>
-                            {
-                              // display fails if message is too long
-                              errors[key].map(e => (
-                                <tr>
-                                  <td colSpan={2}><p  className='alert alert-error text-sm'>{e}</p></td> 
-                                </tr>
-                              ))
-                            }
+                              {
+                                errors[key].length &&
+                                // display fails if message is too long
+                                errors[key].map((e, i) => (
+                                  <tr key={e+i.toString()}>
+                                    <td colSpan={2}><p  className={
+                                      schema[key].meta?.quickForm?.errrorClassName || 'alert alert-error text-sm'
+                                    }>{e}</p></td> 
+                                  </tr>
+                                ))
+                              }
                             </tbody>
                           </table>
                         </td>

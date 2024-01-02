@@ -1,11 +1,12 @@
 [x]  All strings inserted and retrieved from db require processing to escape single quote characters
-[ ]  All strings used to search db should probably be escaped for single quotes as well..
+[x]  All strings used to search db should probably be escaped for single quotes as well..
 [ ]  password reset protocol with email verification for admin accounts
 [x]  email service
 [x]  admin/user accounts should have email or admin email environment variable
 [x]  admin should get email notification for contact messages and reviews
+[ ]  admin user account should not be deletable
 [ ]  email list for guests to sign up and get updates about new events
-[ ]  users leaving event reviews should see a modal popup explaining their review is pending approval
+[x]  users leaving event reviews should see a modal popup explaining that their review is pending approval
 [x]  gallery component upgrade to non grid based version and column stacked media elements
 [ ]  fix video media previews are not visible on mobile safari
 [x]  music tracks admin page
@@ -13,6 +14,7 @@
 [x]  music tracks upload, delete
 [x]  music visualization
 [x]  listen page
+[x]  media-viewer component should support embeded video iframe
 [ ]  fix month calendar on home page is off center on mobile when there are no events for current month
 [ ]  find working rich text editor for updates
 [x]  search news updates on news and admin news page
@@ -34,19 +36,30 @@
 [ ]  upload media and upload tracks server routes should prohibit unsupported file types
 [ ]  delete media and track routes require schema to ensure filename is provided
 [ ]  delete media and track route is returning success message even if file does not exist
-[ ]  media used in static fixed elements in site should not be kept in the media folder or be deleteable
-[ ]  lazy loading for images and videos
+[x]  media used in static, fixed elements in site should not be kept in the media folder or be deleteable
+[x]  lazy loading for images and videos
 [x]  centralize accepted media extensions and import where needed
 [ ]  homepage latest news default alternative when there are no news updates
 [ ]  homepage reviews default alternative when there are no approved reviews
-[ ]  events and news pages should have consistent title and searchbar layout as well as any other searchable item pages
-[ ]  events page calendar year should be changeable
+[x]  events and news pages should have consistent title and searchbar layout as well as any other searchable item pages
+[x]  events page calendar year should be changeable
 [ ]  identify and fix low/poor contrast foreground-background visual elements
 [x]  fix admin-review approve and delete buttons misaligned
-[ ]  quick-form option for string values to be textareas instead of inputs with column and width specificity
-[ ]  combine quick-forms with masonry layout and see if viable option for responsive forms
+[x]  quick-form option for string values to be textareas instead of inputs with column and width specificity
+[x]  quick-form should have 100% width of parent element and label column should only take needed space while input field column should occupy remaining space
+[x]  quick-form labels should optionally be displayed to the left of input fields or above, or not at all, with above being default
+[ ]  quick-form labels should optionally be derived from schema keyvaules or overriden via quickformschemametatype
+[x]  quick-form select option fields should have placeholder option disabled
+[x]  quick-form error messages should be optional and styleable
+[x]  quick-form input field should optionally be a custom input component
+[ ]  quick-form custom classnames should optionally override or append to default quick-form classnames
+[x]  quick-form placeholder should be optionally provided or derived from schema key
+[ ]  storage-context should be a typed component and optionally validated with schema validation service
 [ ]  events model should have field(s) for physical location addresses
 [ ]  event reviews should have better/seperate system for approved vs featured status
 [ ]  events page, clicking on a month, but not a specific date, should select event search results for the whole month
 [x]  generalized content infinite scroll component
-[ ]  client and server config keyvalues to set verbosity level of logging 
+[ ]  client and server config keyvalues to set verbosity level of logging
+[ ]  fix homepage error when db not connected successfully
+[x]  fix infinite-content-scroller keeps querying db when return 0 rows
+[ ]  config environment variables should be renamed specific to this app to prevent interference with other potential environment variables

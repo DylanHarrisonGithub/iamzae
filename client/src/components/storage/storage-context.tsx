@@ -8,10 +8,10 @@ import AuthService from '../../services/auth.service';
 
 import config from '../../config/config';
 
-// export type StorageProps<T extends { [key: string]: any }> = {
-//   children: React.ReactNode[] | React.ReactElement<any, any> | null,
-//   keys: T //| string[] 
-// }
+export type StorageProps2<T extends keyof any> = {
+  children: React.ReactNode[] | React.ReactElement<any, any> | null,
+  keys: T //| string[] 
+}
 export type StorageProps = {
   children: React.ReactNode[] | React.ReactElement<any, any> | null,
   keys: string[] 

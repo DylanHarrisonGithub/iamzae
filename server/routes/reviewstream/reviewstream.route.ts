@@ -11,7 +11,7 @@ export default async (request: ParsedRequest<{
   id?: string
 }>): Promise<RouterResponse> => {
 
-  const { afterID, numrows, search, id, event } = request.params;
+  const { afterID, numrows, search, id, event } = { ...request.params, search: request.params.search?.replace(/'/g, `''`) };
 
   const dbRes = 
     id ?
